@@ -37,6 +37,7 @@ iguide_project/
 - Google Earth Engine account
 - Google Cloud Project (for GEE authentication)
 - Google Drive access
+- **PostgreSQL 12+** (for database storage)
 
 ## Installation
 
@@ -142,13 +143,85 @@ black src/
 flake8 src/
 ```
 
-## Database Integration
+## Database Integration (PostgreSQL)
+
+### Setup PostgreSQL
+
+**Detailed guide**: See `docs/POSTGRESQL_SETUP.md`
+
+#### Quick Setup
+
+1. **Install PostgreSQL** (if not already installed)
+    - Download from [postgresql.org](https://www.postgresql.org/download/)
+    - Or use package manager: `choco install postgresql` (Windows)
+
+2. **Create Database and User**
+
+    ```bash
+    # Connect as postgres superuser
+    psql -U postgres
+
+    # In psql, run:
+    CREATE DATABASE iguide_db;
+    CREATE USER iguide_user WITH PASSWORD 'your_secure_password';
+    GRANT ALL PRIVILEGES ON DATABASE iguide_db TO iguide_user;
+    \q
+    ```
+
+3. **Configure Environment Variables**
+
+    Edit `.env` file:
+
+    ```env
+    DB_HOST=localhost
+    DB_PORT=5432
+    DB_NAME=iguide_db
+    DB_USER=iguide_user
+    DB_PASSWORD=your_secure_password
+    ```
+
+4. **Create Database Tables**
+
+    ```bash
+    python src/preprocessing/database_integration.py --create-tables
+    ```
+
+5. **Test Connection**
+    ```bash
+    python test_db_connection.py
+    ```
+
+### Database Operations
+
+#### Ingest Data
+
+```bash
+python src/preprocessing/database_integration.py --ingest data/processed/your_file.csv
+```
+
+#### View Statistics
+
+```bash
+python src/preprocessing/database_integration.py --stats
+```
+
+#### Query Data
+
+Use the sample queries in `sql/sample_queries.sql` or connect with any PostgreSQL client:
+
+```bash
+psql -U iguide_user -d iguide_db
+```
+
+### Database Schema
 
 The satellite data table infrastructure includes:
 
-- **Table Schema**: Optimized for storing municipality embeddings
-- **Indexing**: Efficient querying by municipality and state
+- **Table Schema**: Optimized for storing municipality embeddings (64 dimensions)
+- **Indexing**: Efficient querying by municipality, state, and date
 - **Data Types**: Appropriate types for embeddings and metadata
+- **Views**: Pre-built views for common queries
+- **Functions**: Utility functions for data analysis
 
 See `docs/database_schema.md` for detailed schema information.
 
