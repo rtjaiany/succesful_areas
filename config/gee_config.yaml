@@ -1,0 +1,26 @@
+# Google Earth Engine Settings
+gee:
+  project_id: ${GEE_PROJECT_ID}
+  satellite_dataset: "GOOGLE/Research/open-buildings/v3/polygons"
+  embedding_asset: "GOOGLE/Research/open-buildings-embeddings/v1"
+  scale: 10  # meters per pixel
+  max_pixels: 1e9
+
+# Processing Settings
+processing:
+  batch_size: ${BATCH_SIZE:100}
+  max_workers: ${MAX_WORKERS:4}
+  retry_attempts: 3
+  retry_delay: 5  # seconds
+
+# Export Settings
+export:
+  drive_folder: ${GDRIVE_FOLDER_ID}
+  file_format: "CSV"
+  file_prefix: "municipality_embeddings"
+  
+# Region Settings
+region:
+  country: "Brazil"
+  admin_level: "municipality"
+  boundary_source: "IBGE"  # Instituto Brasileiro de Geografia e Estatística
