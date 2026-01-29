@@ -85,25 +85,51 @@ earthengine authenticate
 
 ### Extract Satellite Embeddings
 
-Run the main extraction script:
+#### Option 1: Memory-Efficient Extraction (⭐ Recommended for Production)
+
+For large datasets or systems with limited memory:
+
+```bash
+# Streaming mode (incremental writes, minimal memory)
+python src/gee/extract_embeddings_efficient.py --mode streaming
+
+# Server-side mode (processing on GEE servers)
+python src/gee/extract_embeddings_efficient.py --mode server-side
+
+# Both modes
+python src/gee/extract_embeddings_efficient.py --mode both
+```
+
+**Benefits:**
+
+- Constant memory usage (~200MB)
+- Can handle unlimited dataset sizes
+- Writes results incrementally
+- Better for long-running tasks
+
+#### Option 2: Standard Extraction
+
+For small datasets or systems with ample RAM:
 
 ```bash
 python src/gee/extract_embeddings.py
 ```
 
-This will:
+**Note:** See `docs/MEMORY_OPTIMIZATION.md` for detailed comparison and recommendations.
+
+### What the Extraction Does
 
 1. Connect to Google Earth Engine
 2. Load Brazilian municipality boundaries
 3. Compute mean 64-dimensional embeddings for each municipality
-4. Export results to Google Drive as CSV
+4. Export results to CSV (and optionally Google Drive)
 
 ### Data Preprocessing
 
 Process the exported CSV data:
 
 ```bash
-python src/preprocessing/process_satellite_data.py
+python src/preprocessing/process_satellite_data.py data/processed/municipality_embeddings_*.csv
 ```
 
 ## Configuration

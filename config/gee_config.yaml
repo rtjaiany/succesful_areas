@@ -8,10 +8,18 @@ gee:
 
 # Processing Settings
 processing:
-  batch_size: ${BATCH_SIZE:100}
-  max_workers: ${MAX_WORKERS:4}
+  batch_size: ${BATCH_SIZE:50}  # Reduced from 100 for better memory management
+  max_workers: ${MAX_WORKERS:2}  # Reduced for memory efficiency
   retry_attempts: 3
   retry_delay: 5  # seconds
+  chunk_size: 10  # Write to disk every N records (memory optimization)
+  
+# Memory Management
+memory:
+  max_memory_mb: 1000  # Maximum memory usage in MB
+  gc_interval: 50  # Force garbage collection every N records
+  monitor_enabled: true  # Enable memory monitoring
+  log_interval: 25  # Log memory usage every N records
 
 # Export Settings
 export:
