@@ -1,28 +1,58 @@
-# iGuide Project - Satellite Data Collection
+# iGuide Project - Environmental Analysis Pipeline
 
 ## Overview
 
-This project extracts environmental features from satellite imagery for Brazilian municipalities using Google Earth Engine (GEE) without downloading raw imagery.
+This project implements a **complete data science pipeline** for environmental analysis of Brazilian municipalities using satellite imagery and multi-source data integration.
+
+### Pipeline Phases
+
+1. **📡 Data Collection** - Gather data from multiple sources (satellite, demographic, economic, environmental)
+2. **🔗 Data Integration** - Merge datasets and ensure data quality
+3. **⚙️ Feature Engineering** - Extract and transform features
+4. **🤖 Machine Learning** - Train and evaluate models
+5. **📊 Statistical Analysis** - Perform in-depth analysis
+6. **📈 Visualization** - Create plots, maps, and dashboards
+
+**Current Status**: Phase 1 (Data Collection - Satellite) ✅ Complete
+
+---
 
 ## Project Structure
 
 ```
 iguide_project/
-├── data/
-│   ├── raw/              # Raw data (gitignored)
-│   └── processed/        # Processed CSV outputs
-├── src/
-│   ├── gee/              # Google Earth Engine scripts
-│   ├── preprocessing/    # Data preprocessing modules
-│   └── utils/            # Utility functions
-├── config/               # Configuration files
-├── notebooks/            # Jupyter notebooks for exploration
-├── tests/                # Unit tests
-├── docs/                 # Additional documentation
-├── requirements.txt      # Python dependencies
-├── .env.example          # Environment variables template
-└── README.md            # This file
+├── 📂 src/                           # Source code (organized by pipeline phase)
+│   ├── 1_collection/                 # Phase 1: Data Collection
+│   │   ├── gee/                      # ✅ Satellite data (GEE)
+│   │   ├── demographic/              # 🔄 Census data
+│   │   ├── economic/                 # 🔄 Economic indicators
+│   │   └── environmental/            # 🔄 Climate/vegetation data
+│   ├── 2_integration/                # Phase 2: Data Integration
+│   ├── 3_features/                   # Phase 3: Feature Engineering
+│   ├── 4_modeling/                   # Phase 4: Machine Learning
+│   ├── 5_analysis/                   # Phase 5: Statistical Analysis
+│   ├── 6_visualization/              # Phase 6: Visualization
+│   ├── preprocessing/                # Data preprocessing utilities
+│   └── utils/                        # Shared utilities
+├── 📂 data/                          # Data storage
+│   ├── raw/                          # Raw data by source
+│   ├── processed/                    # Cleaned data
+│   ├── integrated/                   # Merged datasets
+│   └── features/                     # Engineered features
+├── 📂 models/                        # Trained models
+├── 📂 outputs/                       # Analysis outputs
+│   ├── figures/                      # Plots and maps
+│   ├── reports/                      # Analysis reports
+│   └── tables/                       # Result tables
+├── 📂 notebooks/                     # Jupyter notebooks
+├── 📂 config/                        # Configuration files
+├── 📂 sql/                           # SQL scripts
+├── 📂 scripts/                       # Pipeline automation
+├── 📂 tests/                         # Unit tests
+└── 📂 docs/                          # Documentation
 ```
+
+**See `docs/PROJECT_STRUCTURE.md` for detailed structure documentation.**
 
 ## Features
 
@@ -283,4 +313,5 @@ For large-scale processing, adjust batch size in `config/gee_config.yaml`
 ## Acknowledgments
 
 - Google Earth Engine for satellite data access
+- IBGE for Brazilian municipality boundariesess
 - IBGE for Brazilian municipality boundaries
