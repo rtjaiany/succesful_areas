@@ -26,6 +26,9 @@ iguide_project/
 │   │   ├── extract_pois.py
 │   │   ├── extract_roads.py
 │   │   └── __init__.py
+│   ├── ibge/                  # IBGE data collection
+│   │   ├── collect_municipalities.py
+│   │   └── __init__.py
 │   └── utils/                 # Shared utilities
 ├── 📂 data/                   # Data storage
 │   ├── raw/                   # Raw data
@@ -111,7 +114,15 @@ earthengine authenticate
 
 ## Usage
 
-### 1. Satellite Data Collection
+### 1. IBGE Municipality Boundaries
+
+Before extracting satellite or OSM data, download the official IBGE municipality boundaries:
+
+```bash
+python src/ibge/collect_municipalities.py --year 2022
+```
+
+### 2. Satellite Data Collection
 
 Extract satellite embeddings for Brazilian municipalities:
 
@@ -133,7 +144,7 @@ python src/satellite/extract_embeddings.py
 - Progress tracking
 - Error handling and retry logic
 
-### 2. OSM Data Collection
+### 3. OSM Data Collection
 
 #### Collect OSM Data (Roads + POIs)
 
@@ -246,4 +257,4 @@ Check the log files in the `logs/` directory:
 
 - Jaiany Rocha - jaiany.trindade@ufrgs.br
 - Devika Jain
-- Vinicius Brei - brei@ufrgs.br
+- Vinicius Brei - brei@ufrgs.brr>>>
