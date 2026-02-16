@@ -244,6 +244,6 @@ Check the log files in the `logs/` directory:
 
 ## Contact
 
-Jaiany Rocha - jaiany.trindade@ufrgs.br
-Devika Jain
-Vinicius Brei - brei@ufrgs.brr>
+- Jaiany Rocha - jaiany.trindade@ufrgs.br
+- Devika Jain
+- Vinicius Brei - brei@ufrgs.br
