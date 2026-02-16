@@ -1,15 +1,16 @@
 # Google Earth Engine Settings
+# project_id is loaded from GEE_PROJECT_ID in .env file
 gee:
-  project_id: ${GEE_PROJECT_ID}
   satellite_dataset: "GOOGLE/Research/open-buildings/v3/polygons"
   embedding_asset: "GOOGLE/Research/open-buildings-embeddings/v1"
   scale: 10  # meters per pixel
   max_pixels: 1e9
 
 # Processing Settings
+# These values can be overridden by BATCH_SIZE and MAX_WORKERS in .env file
 processing:
-  batch_size: ${BATCH_SIZE:50}  # Reduced from 100 for better memory management
-  max_workers: ${MAX_WORKERS:2}  # Reduced for memory efficiency
+  batch_size: 50  # Number of municipalities per batch (optimized for free tier)
+  max_workers: 2  # Number of parallel workers (optimized for free tier)
   retry_attempts: 3
   retry_delay: 5  # seconds
   chunk_size: 10  # Write to disk every N records (memory optimization)
@@ -22,8 +23,8 @@ memory:
   log_interval: 25  # Log memory usage every N records
 
 # Export Settings
+# drive_folder is loaded from GDRIVE_FOLDER_ID in .env file
 export:
-  drive_folder: ${GDRIVE_FOLDER_ID}
   file_format: "CSV"
   file_prefix: "municipality_embeddings"
   

@@ -23,15 +23,22 @@ This phase focuses on collecting data from various sources to build a comprehens
     - Household composition
 - **Storage**: `data/raw/demographic/`
 
-### 3. Economic Data (🔄 To Implement)
+### 3. Economic Data (🔄 In Progress)
 
-- **Source**: IBGE, Central Bank APIs
+- **Source**: OpenStreetMap (OSM), IBGE, Central Bank APIs
+- **Implemented**:
+    - ✅ OSM data download (Geofabrik)
+    - ✅ Commercial POI extraction (banks, shops, amenities) - **IMPLEMENTED**
+    - 🔄 Infrastructure (road network, density) - **IMPLEMENTED**
 - **Planned Data**:
     - GDP per capita
     - Employment rates
     - Income distribution
     - Economic sectors
 - **Storage**: `data/raw/economic/`
+- **Scripts**:
+    - `economic/collect_osm_data.py` - Main collection script
+    - `economic/extract_pois.py` - POI extraction
 
 ### 4. Environmental Data (🔄 To Implement)
 

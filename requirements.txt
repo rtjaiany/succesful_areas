@@ -10,6 +10,7 @@ pandas>=2.0.0
 numpy>=1.24.0
 geopandas>=0.14.0
 shapely>=2.0.0
+osmium>=3.6.0  # OSM PBF file parsing
 
 # Database (for future integration)
 psycopg2-binary>=2.9.9

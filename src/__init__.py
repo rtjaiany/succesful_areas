@@ -1,4 +1,7 @@
-"""iGuide Project - Satellite Data Collection Package"""
+"""
+iGuide Project - Source Code Package
+
+This package contains all the source code for the iGuide environmental analysis pipeline.
+"""
 
 __version__ = "0.1.0"
-__author__ = "iGuide Project Team"
