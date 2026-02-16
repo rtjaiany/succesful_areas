@@ -1,8 +1,8 @@
-# 🛰️ Satellite Data Collection - Updated Approach
+# 🛰️ Satellite Data Collection
 
-## What Changed
+## What we use
 
-The original script was trying to use Google's satellite embeddings dataset, which is not publicly available yet. I've updated it to use **Sentinel-2 satellite imagery** instead, which is:
+We use **Sentinel-2 satellite imagery**, which is:
 
 ✅ **Freely available** in Google Earth Engine  
 ✅ **High quality** - 10m resolution  
@@ -11,9 +11,9 @@ The original script was trying to use Google's satellite embeddings dataset, whi
 
 ---
 
-## New Features Being Extracted
+## Features Extracted
 
-Instead of generic embeddings, we're now extracting **18 meaningful satellite features** for each municipality:
+We extract **18 meaningful satellite features** for each municipality:
 
 ### 🌈 Spectral Bands (10 features)
 
@@ -110,7 +110,7 @@ image_count, extraction_date, data_source
 - **NDBI, UI**: Urban development and built-up areas
 - **NIR, SWIR**: Agricultural vs urban vs forest
 
-### Economic Indicators (indirect)
+### Economic Indicators
 
 - High NDVI → Agricultural activity
 - High NDBI → Urban development
@@ -120,10 +120,10 @@ image_count, extraction_date, data_source
 
 ## Running the Updated Script
 
-### Same command as before:
+### Command:
 
 ```bash
-python src/1_collection/gee/extract_embeddings_efficient.py --mode streaming
+python src/satellite/extract_embeddings.py
 ```
 
 ### What to expect:
@@ -166,33 +166,6 @@ These indices are well-established in remote sensing:
 
 ---
 
-## Next Steps After Collection
-
-Once you have the satellite data:
-
-### 1. Data Validation
-
-```python
-import pandas as pd
-df = pd.read_csv('data/raw/satellite/municipality_embeddings_*.csv')
-print(df.describe())  # Check statistics
-print(df.isnull().sum())  # Check missing values
-```
-
-### 2. Visualization
-
-- Map NDVI values (vegetation coverage)
-- Map NDBI values (urban development)
-- Compare states/regions
-
-### 3. Integration
-
-- Combine with demographic data
-- Combine with economic data
-- Create master dataset for modeling
-
----
-
 ## Troubleshooting
 
 ### "No Sentinel-2 images found"
@@ -222,5 +195,3 @@ print(df.isnull().sum())  # Check missing values
 ✅ **Scientifically validated** indices used in research  
 ✅ **Same ease of use** - just run the script!  
 ✅ **Better for your analysis** - interpretable features
-
-**You're ready to collect real, meaningful satellite data for all Brazilian municipalities!** 🚀

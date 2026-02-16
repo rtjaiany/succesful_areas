@@ -7,7 +7,7 @@ This script parses OSM PBF files and extracts commercial POIs including:
 - Offices
 - Marketplaces and amenities
 
-Author: i-guide project
+Authors: Jaiany Rocha, Devika Jain and Vinicius Brei
 Date: 2026-02-15
 """
 
@@ -355,13 +355,13 @@ def main():
     parser.add_argument(
         "--input",
         type=str,
-        default="data/raw/economic/osm/raw/brazil-latest.osm.pbf",
+        default="data/raw/osm/raw/brazil-latest.osm.pbf",
         help="Input OSM PBF file",
     )
     parser.add_argument(
         "--output",
         type=str,
-        default="data/raw/economic/osm/pois/commercial_pois.geojson",
+        default="data/raw/osm/pois/commercial_pois.geojson",
         help="Output file path",
     )
     parser.add_argument(

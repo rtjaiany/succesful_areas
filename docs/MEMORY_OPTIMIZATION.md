@@ -2,233 +2,141 @@
 
 ## Overview
 
-This guide explains the memory optimizations implemented for satellite data extraction and provides recommendations for different scenarios.
+This guide explains memory optimization strategies for satellite data extraction.
 
 ---
 
-## 🔄 Two Extraction Approaches
+## 🚀 Current Extraction Approach
 
-### 1. **Standard Extraction** (`extract_embeddings.py`)
+### **Satellite Data Extraction** (`extract_embeddings.py`)
 
-**Best for:**
+**Features:**
 
-- Small to medium datasets (< 1000 municipalities)
-- Systems with ample RAM (8GB+)
-- When you need the full DataFrame in memory for immediate processing
+- Memory-efficient processing with batch operations
+- Incremental CSV writes to minimize memory usage
+- Automatic garbage collection
+- Progress tracking and error handling
+- Retry logic for failed operations
 
 **Memory Usage:**
 
-- Loads all results into a pandas DataFrame
-- Memory grows linearly with number of municipalities
-- ~500MB - 2GB for full Brazil dataset
-
-**Pros:**
-
-- Simple and straightforward
-- Easy to manipulate data in memory
-- Good for exploratory analysis
-
-**Cons:**
-
-- High memory usage for large datasets
-- Risk of out-of-memory errors
-- Slower for very large datasets
-
----
-
-### 2. **Memory-Efficient Extraction** (`extract_embeddings_efficient.py`) ⭐ **RECOMMENDED**
+- Constant memory footprint (~200-500MB)
+- Processes municipalities in batches
+- Writes results incrementally to CSV
 
 **Best for:**
 
-- Large datasets (1000+ municipalities)
-- Systems with limited RAM (< 8GB)
+- All dataset sizes
 - Production environments
 - Long-running extractions
-
-**Memory Usage:**
-
-- Constant memory footprint (~100-200MB)
-- Writes results incrementally to CSV
-- Aggressive garbage collection
-
-**Pros:**
-
-- Minimal memory usage
-- Can handle unlimited dataset sizes
-- More reliable for long-running tasks
-- Better error recovery
-
-**Cons:**
-
-- Results not immediately available in memory
-- Slightly more complex code
+- Systems with any RAM configuration
 
 ---
 
-## 📊 Memory Comparison
+## 📊 Memory Optimization Techniques
 
-| Feature              | Standard       | Memory-Efficient |
-| -------------------- | -------------- | ---------------- |
-| **Peak Memory**      | ~2GB           | ~200MB           |
-| **Memory Growth**    | Linear         | Constant         |
-| **Processing Speed** | Fast           | Moderate         |
-| **Reliability**      | Good           | Excellent        |
-| **Max Dataset Size** | Limited by RAM | Unlimited        |
-| **Error Recovery**   | Poor           | Good             |
+### 1. **Batch Processing**
 
----
-
-## 🚀 Usage
-
-### Standard Extraction
-
-```bash
-# Run standard extraction
-python src/gee/extract_embeddings.py
-```
-
-### Memory-Efficient Extraction
-
-```bash
-# Streaming mode (local processing, incremental writes)
-python src/gee/extract_embeddings_efficient.py --mode streaming
-
-# Server-side mode (processing on GEE servers)
-python src/gee/extract_embeddings_efficient.py --mode server-side
-
-# Both modes
-python src/gee/extract_embeddings_efficient.py --mode both
-```
-
----
-
-## 🔧 Memory Optimization Techniques
-
-### 1. **Streaming CSV Writes**
-
-Instead of accumulating all results in memory:
+The script processes municipalities in configurable batches:
 
 ```python
-# ❌ Memory-intensive (standard approach)
-results = []
-for municipality in municipalities:
-    result = process(municipality)
-    results.append(result)
-df = pd.DataFrame(results)  # All data in memory!
-df.to_csv('output.csv')
-
-# ✅ Memory-efficient (streaming approach)
-with open('output.csv', 'w') as f:
-    writer = csv.DictWriter(f, fieldnames=columns)
-    writer.writeheader()
-
-    for municipality in municipalities:
-        result = process(municipality)
-        writer.writerow(result)  # Write immediately
-        del result  # Free memory
+# Process in batches to control memory
+for batch in batches:
+    results = process_batch(batch)
+    write_to_csv(results)
+    clear_memory()
 ```
 
-### 2. **Chunked Processing with Garbage Collection**
+### 2. **Incremental Writes**
+
+Results are written to CSV immediately, not accumulated in memory:
+
+```python
+# Write each result immediately
+with open('output.csv', 'a') as f:
+    writer.writerow(result)
+    # Result is freed from memory
+```
+
+### 3. **Garbage Collection**
+
+Automatic garbage collection after each batch:
 
 ```python
 import gc
 
-for i in range(0, total, batch_size):
-    batch = process_batch(i, i + batch_size)
-    write_batch(batch)
-
-    # Clear memory
-    del batch
-    gc.collect()  # Force garbage collection
+# After processing batch
+del batch_results
+gc.collect()  # Force garbage collection
 ```
 
-### 3. **Server-Side Processing**
+### 4. **Server-Side Processing**
 
-Let GEE servers do the heavy lifting:
+Google Earth Engine performs heavy computation on their servers:
 
 ```python
-# Processing happens on GEE servers, not locally
-municipalities_with_embeddings = municipalities.map(compute_embedding)
-
-# Export directly from GEE to Google Drive
-task = ee.batch.Export.table.toDrive(
-    collection=municipalities_with_embeddings,
-    # ... export parameters
+# Processing happens on GEE servers
+result = ee_image.reduceRegion(
+    reducer=ee.Reducer.mean(),
+    geometry=municipality_geometry
 )
-```
-
-### 4. **Memory Monitoring**
-
-```python
-from src.utils.memory_utils import MemoryMonitor
-
-monitor = MemoryMonitor()
-monitor.log_memory_usage("before processing")
-
-# ... your code ...
-
-monitor.log_memory_usage("after processing")
-monitor.force_garbage_collection()
 ```
 
 ---
 
-## 📈 Configuration Optimization
+## ⚙️ Configuration
 
-### Updated `config/gee_config.yaml`
+### Recommended Settings (`config/gee_config.yaml`)
 
 ```yaml
 processing:
-    batch_size: 50 # Reduced from 100
-    max_workers: 2 # Reduced from 4
-    chunk_size: 10 # Write every 10 records
+    batch_size: 50 # Municipalities per batch
+    max_workers: 2 # Parallel workers
+    chunk_size: 10 # Write frequency
 
 memory:
-    max_memory_mb: 1000
-    gc_interval: 50
-    monitor_enabled: true
-    log_interval: 25
+    max_memory_mb: 1000 # Memory limit
+    gc_interval: 50 # Garbage collection frequency
+    monitor_enabled: true # Enable monitoring
 ```
 
-**Key Changes:**
+**Key Parameters:**
 
-- **Smaller batch size**: Processes fewer municipalities at once
-- **Fewer workers**: Reduces parallel processing overhead
-- **Chunk size**: Flushes to disk more frequently
-- **Memory monitoring**: Tracks usage in real-time
+- **batch_size**: Number of municipalities processed together
+    - Smaller = less memory, slower processing
+    - Larger = more memory, faster processing
+    - Recommended: 25-100
+
+- **max_workers**: Parallel processing threads
+    - More workers = faster but more memory
+    - Recommended: 2-4
+
+- **chunk_size**: How often to flush results to disk
+    - Smaller = more frequent writes, less memory
+    - Recommended: 10-25
 
 ---
 
 ## 🎯 Recommendations by Scenario
 
-### Scenario 1: Testing with Small Dataset (< 100 municipalities)
-
-```bash
-# Use standard extraction
-python src/gee/extract_embeddings.py
-```
-
-**Config:**
+### Scenario 1: Testing (< 100 municipalities)
 
 ```yaml
 processing:
     batch_size: 25
+    max_workers: 2
 ```
+
+**Expected:** Fast processing, minimal memory usage
 
 ---
 
-### Scenario 2: Production - Full Brazil Dataset (~5,500 municipalities)
-
-```bash
-# Use memory-efficient streaming
-python src/gee/extract_embeddings_efficient.py --mode streaming
-```
-
-**Config:**
+### Scenario 2: Production - Full Brazil (~5,500 municipalities)
 
 ```yaml
 processing:
     batch_size: 50
+    max_workers: 2
     chunk_size: 10
 
 memory:
@@ -237,122 +145,78 @@ memory:
     monitor_enabled: true
 ```
 
+**Expected:** 1-3 hours, ~500MB memory usage
+
 ---
 
-### Scenario 3: Limited Memory System (< 4GB RAM)
-
-```bash
-# Use server-side processing
-python src/gee/extract_embeddings_efficient.py --mode server-side
-```
-
-**Config:**
+### Scenario 3: Limited Memory (< 4GB RAM)
 
 ```yaml
 processing:
-    batch_size: 25 # Very small batches
-    chunk_size: 5 # Frequent writes
+    batch_size: 25
+    max_workers: 1
+    chunk_size: 5
 
 memory:
     max_memory_mb: 500
     gc_interval: 25
 ```
 
+**Expected:** Slower but very safe
+
 ---
 
-### Scenario 4: Maximum Speed (with 16GB+ RAM)
-
-```bash
-# Use standard extraction with larger batches
-python src/gee/extract_embeddings.py
-```
-
-**Config:**
+### Scenario 4: High Performance (16GB+ RAM)
 
 ```yaml
 processing:
-    batch_size: 200
-    max_workers: 8
+    batch_size: 100
+    max_workers: 4
+    chunk_size: 25
+```
+
+**Expected:** Fastest processing, higher memory usage
+
+---
+
+## 📈 Monitoring Memory
+
+The script automatically logs memory usage:
+
+```
+2026-02-16 17:00:00 | INFO | Memory: 180.5 MB (2.3% of system)
+2026-02-16 17:00:30 | INFO | Processing batch 1: municipalities 0-50
+2026-02-16 17:01:00 | INFO | Memory: 205.3 MB (2.6% of system) [Δ +24.8 MB]
+2026-02-16 17:01:00 | INFO | Garbage collection freed 15.2 MB
+2026-02-16 17:01:30 | INFO | Progress: 10.0% (500/5000)
 ```
 
 ---
 
-## 🛠️ Memory Profiling Tools
-
-### 1. **Built-in Memory Monitor**
-
-```python
-from src.utils.memory_utils import MemoryMonitor, log_system_memory
-
-# Log system memory
-log_system_memory()
-
-# Monitor specific code
-monitor = MemoryMonitor()
-monitor.log_memory_usage("start")
-# ... your code ...
-monitor.log_memory_usage("end")
-```
-
-### 2. **Memory Profiling Decorator**
-
-```python
-from src.utils.memory_utils import memory_profile
-
-@memory_profile
-def my_function():
-    # Function will be automatically profiled
-    pass
-```
-
-### 3. **Memory Guard**
-
-```python
-from src.utils.memory_utils import MemoryGuard
-
-with MemoryGuard(max_memory_mb=500):
-    # Code will raise exception if memory exceeds 500MB
-    process_data()
-```
-
----
-
-## 📊 Monitoring Memory During Extraction
-
-The memory-efficient extractor automatically logs memory usage:
-
-```
-2026-01-28 21:00:00 | INFO | Memory before: 150.23 MB (2.1% of system) [Δ +0.00 MB]
-2026-01-28 21:00:30 | INFO | Processing batch 1: municipalities 0 to 50
-2026-01-28 21:01:00 | INFO | Memory after batch: 175.45 MB (2.5% of system) [Δ +25.22 MB]
-2026-01-28 21:01:00 | INFO | Garbage collection freed 15.30 MB
-2026-01-28 21:01:30 | INFO | Progress: 10.0% (500/5000)
-```
-
----
-
-## 🔍 Troubleshooting Memory Issues
+## 🔍 Troubleshooting
 
 ### Issue: Out of Memory Error
 
 **Solutions:**
 
-1. Use memory-efficient extraction:
-
-    ```bash
-    python src/gee/extract_embeddings_efficient.py --mode streaming
-    ```
-
-2. Reduce batch size in `config/gee_config.yaml`:
+1. Reduce batch size:
 
     ```yaml
     processing:
-        batch_size: 25 # or even 10
+        batch_size: 10
     ```
 
-3. Use server-side processing:
-    ```bash
-    python src/gee/extract_embeddings_efficient.py --mode server-side
+2. Reduce workers:
+
+    ```yaml
+    processing:
+        max_workers: 1
+    ```
+
+3. Enable aggressive garbage collection:
+    ```yaml
+    memory:
+        gc_interval: 10
     ```
 
 ---
@@ -368,14 +232,18 @@ The memory-efficient extractor automatically logs memory usage:
         batch_size: 100
     ```
 
-2. Reduce chunk size for more frequent writes:
+2. Increase workers:
 
     ```yaml
     processing:
-        chunk_size: 5
+        max_workers: 4
     ```
 
-3. Use standard extraction if you have enough RAM
+3. Reduce write frequency:
+    ```yaml
+    processing:
+        chunk_size: 50
+    ```
 
 ---
 
@@ -385,49 +253,52 @@ The memory-efficient extractor automatically logs memory usage:
 
 **Solutions:**
 
-1. Use memory-efficient extraction
-2. Enable memory monitoring:
+1. Set strict memory limit:
+
     ```yaml
     memory:
-        monitor_enabled: true
-        max_memory_mb: 500 # Set lower limit
+        max_memory_mb: 500
+    ```
+
+2. Use minimal batch size:
+    ```yaml
+    processing:
+        batch_size: 10
+        max_workers: 1
     ```
 
 ---
 
 ## 📝 Best Practices
 
-1. **Always monitor memory** during first run
-2. **Start with small batches** and increase gradually
-3. **Use streaming mode** for production
-4. **Enable garbage collection** for long-running tasks
-5. **Test with subset** before processing full dataset
-6. **Monitor GEE quota** to avoid rate limits
-7. **Use server-side processing** when possible
+1. **Start conservative** - Use small batches first
+2. **Monitor logs** - Watch memory usage patterns
+3. **Test with subset** - Process 100 municipalities first
+4. **Adjust gradually** - Increase batch size if stable
+5. **Enable monitoring** - Always track memory usage
+6. **Check GEE quota** - Avoid rate limits
 
 ---
 
 ## 🎓 Memory Optimization Checklist
 
-- [ ] Choose appropriate extraction mode
-- [ ] Configure batch size based on available RAM
+- [ ] Configure appropriate batch size for your RAM
 - [ ] Enable memory monitoring
-- [ ] Set appropriate chunk size
+- [ ] Set reasonable chunk size
 - [ ] Test with small dataset first
 - [ ] Monitor logs for memory warnings
-- [ ] Use garbage collection for large datasets
-- [ ] Consider server-side processing for very large datasets
+- [ ] Adjust settings based on performance
+- [ ] Keep batch size under control
 
 ---
 
-## 📚 Additional Resources
+## 📚 Resources
 
-- **Memory Utils**: `src/utils/memory_utils.py`
-- **Standard Extraction**: `src/gee/extract_embeddings.py`
-- **Efficient Extraction**: `src/gee/extract_embeddings_efficient.py`
+- **Extraction Script**: `src/satellite/extract_embeddings.py`
 - **Configuration**: `config/gee_config.yaml`
+- **Utilities**: `src/utils/`
 
 ---
 
-**Last Updated**: 2026-01-28
-**Recommended Approach**: Memory-Efficient Streaming for production use
+**Last Updated**: 2026-02-16
+**Recommended**: Use default settings for most cases

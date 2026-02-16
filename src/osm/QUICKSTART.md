@@ -22,18 +22,18 @@ This guide will help you quickly get started with collecting OpenStreetMap data 
 
 ## Step-by-Step Guide
 
-### Step 1: Download OSM Data (~5-10 minutes)
+### Step 1: Download OSM Data
 
 Download the Brazil OSM extract from Geofabrik:
 
 ```bash
-python src/1_collection/economic/collect_osm_data.py --source geofabrik
+python src/osm/collect_osm_data.py --source geofabrik
 ```
 
 **What happens:**
 
 - Downloads `brazil-latest.osm.pbf` (~1-2 GB)
-- Saves to `data/raw/economic/osm/raw/`
+- Saves to `data/raw/osm/raw/`
 - Shows progress bar during download
 - Prompts before re-downloading if file exists
 
@@ -43,7 +43,7 @@ python src/1_collection/economic/collect_osm_data.py --source geofabrik
 INFO - Starting Brazil OSM download from geofabrik...
 INFO - Downloading from: https://download.geofabrik.de/south-america/brazil-latest.osm.pbf
 Downloading Brazil OSM: 100%|██████████| 1.5GB/1.5GB [05:23<00:00, 4.6MB/s]
-INFO - Download complete: data/raw/economic/osm/raw/brazil-latest.osm.pbf
+INFO - Download complete: data/raw/osm/raw/brazil-latest.osm.pbf
 INFO - File size: 1.45 GB
 ```
 
@@ -65,7 +65,7 @@ pip install osmium
 Once osmium is installed, run extraction:
 
 ```bash
-python src/1_collection/economic/collect_osm_data.py --skip-download
+python src/osm/collect_osm_data.py --skip-download
 ```
 
 **Note:** Feature extraction is currently under development. The script will:
@@ -127,37 +127,39 @@ After collecting OSM data, the next phase is aggregation:
 ```text
 iguide_project/
 ├── data/
-│   └── raw/
-│       └── economic/
-│           └── osm/
-│               ├── raw/
-│               │   └── brazil-latest.osm.pbf    # Downloaded OSM data
-│               ├── pois/                         # (Future) Extracted POIs
-│               └── roads/                        # (Future) Extracted roads
+│   ├── raw/
+│   │   └── osm/
+│   │       ├── raw/
+│   │       │   └── brazil-latest.osm.pbf    # Downloaded OSM data
+│   │       ├── pois/                         # (Future) Extracted POIs
+│   │       └── roads/                        # (Future) Extracted roads
+│   └── processed/
+│       └── osm/                              # (Future) Processed outputs
 └── src/
-    └── 1_collection/
-        └── economic/
-            ├── collect_osm_data.py              # Main collection script
-            └── README.md                         # Detailed documentation
+    └── osm/
+        ├── collect_osm_data.py              # Main collection script
+        ├── extract_pois.py                   # POI extraction
+        ├── extract_roads.py                  # Road extraction
+        └── README.md                         # Detailed documentation
 ```
 
 ## Command Reference
 
 ```bash
 # Download OSM data
-python src/1_collection/economic/collect_osm_data.py --source geofabrik
+python src/osm/collect_osm_data.py --source geofabrik
 
 # Download only (skip extraction)
-python src/1_collection/economic/collect_osm_data.py --download-only
+python src/osm/collect_osm_data.py --download-only
 
 # Use existing download (skip re-downloading)
-python src/1_collection/economic/collect_osm_data.py --skip-download
+python src/osm/collect_osm_data.py --skip-download
 
 # Specify custom output directory
-python src/1_collection/economic/collect_osm_data.py --output-dir custom/path
+python src/osm/collect_osm_data.py --output-dir custom/path
 
 # Get help
-python src/1_collection/economic/collect_osm_data.py --help
+python src/osm/collect_osm_data.py --help
 ```
 
 ## Need Help?

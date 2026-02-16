@@ -7,7 +7,7 @@ This guide explains how to extract commercial Points of Interest (POIs) from Ope
 1. **OSM Data Downloaded**: You must have the Brazil OSM PBF file
 
     ```bash
-    python src/1_collection/economic/collect_osm_data.py --source geofabrik
+    python src/osm/collect_osm_data.py --source geofabrik
     ```
 
 2. **Install osmium**: Required for parsing OSM PBF files
@@ -22,14 +22,14 @@ This guide explains how to extract commercial Points of Interest (POIs) from Ope
 Run the POI extraction script directly:
 
 ```bash
-python src/1_collection/economic/extract_pois.py
+python src/osm/extract_pois.py
 ```
 
 This will:
 
-- Read `data/raw/economic/osm/raw/brazil-latest.osm.pbf`
+- Read `data/raw/osm/raw/brazil-latest.osm.pbf`
 - Extract all commercial POIs
-- Save to `data/raw/economic/osm/pois/commercial_pois.geojson`
+- Save to `data/raw/osm/pois/commercial_pois.geojson`
 - Generate statistics in `commercial_pois_stats.json`
 
 ### Option 2: Integrated with Main Script
@@ -37,28 +37,28 @@ This will:
 Run the main collection script (will auto-extract if osmium is installed):
 
 ```bash
-python src/1_collection/economic/collect_osm_data.py --skip-download
+python src/osm/collect_osm_data.py --skip-download
 ```
 
 ## Command-Line Options
 
 ```bash
 # Custom input file
-python src/1_collection/economic/extract_pois.py \
+python src/osm/extract_pois.py \
   --input path/to/custom.osm.pbf
 
 # Custom output location
-python src/1_collection/economic/extract_pois.py \
+python src/osm/extract_pois.py \
   --output path/to/output.geojson
 
 # Different output format
-python src/1_collection/economic/extract_pois.py \
+python src/osm/extract_pois.py \
   --format gpkg  # Options: geojson, gpkg, csv
 
 # Complete example
-python src/1_collection/economic/extract_pois.py \
-  --input data/raw/economic/osm/raw/brazil-latest.osm.pbf \
-  --output data/raw/economic/osm/pois/commercial_pois.geojson \
+python src/osm/extract_pois.py \
+  --input data/raw/osm/raw/brazil-latest.osm.pbf \
+  --output data/raw/osm/pois/commercial_pois.geojson \
   --format geojson
 ```
 
@@ -249,7 +249,7 @@ After POI extraction:
 
     ```python
     import geopandas as gpd
-    pois = gpd.read_file('data/raw/economic/osm/pois/commercial_pois.geojson')
+    pois = gpd.read_file('data/raw/osm/pois/commercial_pois.geojson')
     print(pois.head())
     print(pois['category'].value_counts())
     ```
@@ -266,16 +266,16 @@ After POI extraction:
 
 ```bash
 # 1. Download OSM data (if not already done)
-python src/1_collection/economic/collect_osm_data.py --download-only
+python src/osm/collect_osm_data.py --download-only
 
 # 2. Install osmium
 pip install osmium
 
 # 3. Extract POIs
-python src/1_collection/economic/extract_pois.py
+python src/osm/extract_pois.py
 
 # 4. Check results
-python -c "import geopandas as gpd; pois = gpd.read_file('data/raw/economic/osm/pois/commercial_pois.geojson'); print(f'Total POIs: {len(pois):,}'); print(pois['category'].value_counts())"
+python -c "import geopandas as gpd; pois = gpd.read_file('data/raw/osm/pois/commercial_pois.geojson'); print(f'Total POIs: {len(pois):,}'); print(pois['category'].value_counts())"
 
 # 5. Proceed to aggregation (next phase)
 ```

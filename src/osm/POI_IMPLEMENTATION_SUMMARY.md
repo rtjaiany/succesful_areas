@@ -1,7 +1,6 @@
 # POI Extraction Implementation Summary
 
-**Date**: 2026-02-15  
-**Status**: ✅ **IMPLEMENTED AND READY TO USE**
+**Date**: 2026-02-15
 
 ## What Was Implemented
 
@@ -94,7 +93,7 @@ For each POI, the script extracts:
 
 ```bash
 # 1. Download OSM data (if not already done)
-python src/1_collection/economic/collect_osm_data.py --download-only
+python src/osm/collect_osm_data.py --download-only
 
 # 2. Install osmium
 pip install osmium
@@ -104,12 +103,12 @@ pip install osmium
 
 ```bash
 # Run POI extraction directly
-python src/1_collection/economic/extract_pois.py
+python src/osm/extract_pois.py
 
 # With custom options
-python src/1_collection/economic/extract_pois.py \
-  --input data/raw/economic/osm/raw/brazil-latest.osm.pbf \
-  --output data/raw/economic/osm/pois/commercial_pois.geojson \
+python src/osm/extract_pois.py \
+  --input data/raw/osm/raw/brazil-latest.osm.pbf \
+  --output data/raw/osm/pois/commercial_pois.geojson \
   --format geojson
 ```
 
@@ -117,7 +116,7 @@ python src/1_collection/economic/extract_pois.py \
 
 ```bash
 # Run main script (auto-extracts if osmium installed)
-python src/1_collection/economic/collect_osm_data.py --skip-download
+python src/osm/collect_osm_data.py --skip-download
 ```
 
 ## Output
@@ -177,7 +176,7 @@ The script structure is verified and ready to use. To test:
 
 ```bash
 # Check script help
-python src/1_collection/economic/extract_pois.py --help
+python src/osm/extract_pois.py --help
 
 # Expected output:
 # usage: extract_pois.py [-h] [--input INPUT] [--output OUTPUT]
@@ -266,8 +265,8 @@ The script successfully:
 **To use it now:**
 
 1. Install osmium: `pip install osmium`
-2. Run extraction: `python src/1_collection/economic/extract_pois.py`
+2. Run extraction: `python src/osm/extract_pois.py`
 3. Wait 10-30 minutes for processing
-4. Review output in `data/raw/economic/osm/pois/`
+4. Review output in `data/raw/osm/pois/`
 
 The next phase will focus on aggregating these POIs to municipality level for integration with satellite data.

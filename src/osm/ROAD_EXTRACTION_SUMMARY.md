@@ -1,7 +1,6 @@
-# Road Network Extraction - Implementation Summary
+# Road Network Extraction
 
-**Date**: 2026-02-16  
-**Status**: ✅ **IMPLEMENTED AND READY TO USE**
+**Date**: 2026-02-16
 
 ## Overview
 
@@ -65,12 +64,12 @@ For each road segment:
 
 ```bash
 # Extract road network
-python src/1_collection/economic/extract_roads.py
+python src/osm/extract_roads.py
 
 # With custom options
-python src/1_collection/economic/extract_roads.py \
-  --input data/raw/economic/osm/raw/brazil-latest.osm.pbf \
-  --output data/raw/economic/osm/roads/road_network.geojson \
+python src/osm/extract_roads.py \
+  --input data/raw/osm/raw/brazil-latest.osm.pbf \
+  --output data/raw/osm/roads/road_network.geojson \
   --format geojson
 ```
 
@@ -78,13 +77,13 @@ python src/1_collection/economic/extract_roads.py \
 
 ```bash
 # GeoJSON (default)
-python src/1_collection/economic/extract_roads.py --format geojson
+python src/osm/extract_roads.py --format geojson
 
 # GeoPackage
-python src/1_collection/economic/extract_roads.py --format gpkg
+python src/osm/extract_roads.py --format gpkg
 
 # Shapefile
-python src/1_collection/economic/extract_roads.py --format shp
+python src/osm/extract_roads.py --format shp
 ```
 
 ## Expected Results
@@ -163,7 +162,7 @@ class RoadExtractor(osmium.SimpleHandler):
 
 ```bash
 # Run complete OSM extraction (POIs + Roads)
-python src/1_collection/economic/collect_osm_data.py --skip-download
+python src/osm/collect_osm_data.py --skip-download
 ```
 
 This will:
@@ -173,17 +172,15 @@ This will:
 3. Calculate statistics for both
 4. Save to respective directories
 
-## Phase 3.1 Status - COMPLETE! ✅
-
 ### Completed Tasks
 
 - [x] Download Brazil OSM data from Geofabrik
 - [x] Extract commercial POIs (banks, shops, amenities)
-- [x] **Extract road network (highways, roads)** ✅ **NEW**
+- [x] Extract road network (highways, roads)
 - [x] Save as GeoJSON/GeoPackage
 - [x] Calculate lengths and statistics
 
-### Phase 3.2 - Next Steps
+### Next Steps
 
 1. **Download municipality boundaries** from IBGE
 2. **Spatial aggregation**:
@@ -201,17 +198,17 @@ This will:
 
 ```bash
 # Extract roads
-python src/1_collection/economic/extract_roads.py
+python src/osm/extract_roads.py
 
 # Check output
-python -c "import geopandas as gpd; roads = gpd.read_file('data/raw/economic/osm/roads/road_network.geojson'); print(f'Total roads: {len(roads):,}'); print(f'Total length: {roads[\"length_km\"].sum():,.2f} km'); print(roads['highway_type'].value_counts())"
+python -c "import geopandas as gpd; roads = gpd.read_file('data/raw/osm/roads/road_network.geojson'); print(f'Total roads: {len(roads):,}'); print(f'Total length: {roads[\"length_km\"].sum():,.2f} km'); print(roads['highway_type'].value_counts())"
 ```
 
 ### Integrated Workflow
 
 ```bash
 # Extract both POIs and roads
-python src/1_collection/economic/collect_osm_data.py --skip-download
+python src/osm/collect_osm_data.py --skip-download
 ```
 
 ## Performance Notes
@@ -232,8 +229,6 @@ python src/1_collection/economic/collect_osm_data.py --skip-download
 
 ## Conclusion
 
-**Road network extraction is fully implemented and ready to use!**
-
 The script successfully:
 
 - ✅ Parses OSM PBF files using osmium
@@ -243,11 +238,3 @@ The script successfully:
 - ✅ Generates detailed statistics
 - ✅ Supports multiple output formats
 - ✅ Integrates with the main workflow
-
-**Phase 3.1 is now COMPLETE!** All OSM data collection tasks are implemented:
-
-- OSM data download ✅
-- POI extraction ✅
-- Road extraction ✅
-
-**Ready for Phase 3.2**: Spatial aggregation to municipality level.

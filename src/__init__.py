@@ -1,7 +1,8 @@
 """
-iGuide Project - Source Code Package
+iGuide Project - Satellite and OSM Data Collection
 
-This package contains all the source code for the iGuide environmental analysis pipeline.
+This package contains modules for satellite imagery and OpenStreetMap data collection.
 """
 
 __version__ = "0.1.0"
+__all__ = ["satellite", "osm", "utils"]

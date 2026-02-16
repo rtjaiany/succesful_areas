@@ -1,7 +1,6 @@
-# Phase 3.1 Implementation Summary: OSM Data Collection
+# OSM Data Collection
 
-**Date**: 2026-02-15  
-**Status**: ✅ Data Collection Implemented (Extraction Pending)
+**Date**: 2026-02-15
 
 ## What Was Implemented
 
@@ -9,18 +8,7 @@
 
 Created a comprehensive Python script for downloading OpenStreetMap data for Brazil:
 
-**File**: `src/1_collection/economic/collect_osm_data.py`
-
-**Features**:
-
-- ✅ Downloads Brazil OSM extract from Geofabrik (~1-2 GB)
-- ✅ Progress bar with download speed and ETA
-- ✅ Resume capability (prompts before re-downloading)
-- ✅ Organized output directory structure
-- ✅ Comprehensive logging
-- ✅ Command-line interface with multiple options
-- 🔄 POI extraction (placeholder - requires osmium implementation)
-- 🔄 Road network extraction (placeholder - requires osmium implementation)
+**File**: `src/osm/collect_osm_data.py`
 
 **Command-Line Options**:
 
@@ -59,27 +47,27 @@ Created three documentation files:
 
 Updated `requirements.txt` to include:
 
-- `osmium>=3.6.0` - For OSM PBF file parsing (future use)
+- `osmium>=3.6.0` - For OSM PBF file parsing
 
 ### 4. Project Structure Updates
 
 Updated `src/1_collection/README.md` to reflect:
 
-- Economic data collection status: "In Progress"
-- OSM data download: Implemented ✅
-- Commercial density extraction: Pending 🔄
-- Infrastructure extraction: Pending 🔄
+- Economic data collection status
+- OSM data download
+- Commercial density extraction
+- Infrastructure extraction
 
 ## File Structure Created
 
 ```text
-src/1_collection/economic/
+src/osm/
 ├── __init__.py                 # Module initialization
 ├── collect_osm_data.py         # Main collection script (370 lines)
 ├── README.md                   # Comprehensive documentation
 └── QUICKSTART.md               # Quick start guide
 
-data/raw/economic/osm/          # Created on first run
+data/raw/osm/          # Created on first run
 ├── raw/                        # Raw OSM data
 │   └── brazil-latest.osm.pbf  # Downloaded file (~1-2 GB)
 ├── pois/                       # Future: Extracted POIs
@@ -96,7 +84,7 @@ data/raw/economic/osm/          # Created on first run
 - `shop`: supermarket, convenience, department_store, mall, clothes, electronics, etc.
 - `office`: company, government, insurance, financial
 
-**Metrics** (to be calculated in Phase 3.2):
+**Metrics** (to be calculated):
 
 - Count of commercial POIs per municipality
 - Commercial density (POIs per km²)
@@ -108,7 +96,7 @@ data/raw/economic/osm/          # Created on first run
 
 - `highway`: motorway, trunk, primary, secondary, tertiary, residential, service
 
-**Metrics** (to be calculated in Phase 3.2):
+**Metrics** (to be calculated):
 
 - Total road length per municipality (km)
 - Road density (km per km²)
@@ -121,7 +109,7 @@ data/raw/economic/osm/          # Created on first run
 1. **Download OSM data**:
 
     ```bash
-    python src/1_collection/economic/collect_osm_data.py --source geofabrik
+    python src/osm/collect_osm_data.py --source geofabrik
     ```
 
 2. **Install osmium** (for future extraction):
@@ -131,11 +119,12 @@ data/raw/economic/osm/          # Created on first run
     ```
 
 3. **Run extraction** (when implemented):
+
     ```bash
-    python src/1_collection/economic/collect_osm_data.py --skip-download
+    python src/osm/collect_osm_data.py --skip-download
     ```
 
-## What's Next: Phase 3.2 - Aggregation
+## What's Next: Aggregation
 
 ### Immediate Next Steps
 
@@ -158,7 +147,7 @@ data/raw/economic/osm/          # Created on first run
 4. **Export Results**
     - Create CSV with municipality-level metrics
     - Include: municipality_id, commercial_density, road_density, etc.
-    - Save to `data/processed/economic/`
+    - Save to `data/processed/osm/`
 
 ### Technical Implementation Notes
 
@@ -201,29 +190,6 @@ class RoadHandler(osmium.SimpleHandler):
 - **Attribution**: © OpenStreetMap contributors
 - **Data Quality**: Community-maintained, varies by region
 
-## Testing
-
-The script was tested and confirmed working:
-
-```bash
-$ .\venv\Scripts\python.exe src/1_collection/economic/collect_osm_data.py --help
-
-usage: collect_osm_data.py [-h] [--source {geofabrik,overpass}]
-                           [--output-dir OUTPUT_DIR] [--download-only]
-                           [--skip-download]
-
-Collect OpenStreetMap data for Brazil economic indicators
-
-options:
-  -h, --help            show this help message and exit
-  --source {geofabrik,overpass}
-                        Data source for OSM download
-  --output-dir OUTPUT_DIR
-                        Output directory for OSM data
-  --download-only       Only download data, skip extraction
-  --skip-download       Skip download if file exists
-```
-
 ## Known Limitations
 
 1. **Feature Extraction Not Implemented**
@@ -242,7 +208,7 @@ options:
 
 ## Success Criteria
 
-### Phase 3.1 (Current) ✅
+### Collection ✅
 
 - [x] Download Brazil OSM data from Geofabrik
 - [x] Create organized directory structure
@@ -250,7 +216,7 @@ options:
 - [x] Add comprehensive documentation
 - [x] Test script functionality
 
-### Phase 3.2 (Next) 🔄
+### Extraction and Aggregation 🔄
 
 - [ ] Implement POI extraction with osmium
 - [ ] Implement road network extraction

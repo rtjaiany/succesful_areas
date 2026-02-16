@@ -7,7 +7,7 @@ This script parses OSM PBF files and extracts road network including:
 - Residential and service roads
 - Road attributes (name, surface, lanes, etc.)
 
-Author: i-guide project
+Authors: Jaiany Rocha, Devika Jain and Vinicius Brei
 Date: 2026-02-16
 """
 
@@ -230,12 +230,6 @@ def extract_roads_from_osm(
         gdf.geometry.length * 111.32
     )  # Approximate: 1 degree ≈ 111.32 km at equator
 
-    # For more accurate calculation, we could use:
-    # from shapely.ops import transform
-    # import pyproj
-    # But this would require more memory for 6M+ features
-    # The approximation above is sufficient for Brazil (near equator)
-
     # Save to file
     output_file.parent.mkdir(parents=True, exist_ok=True)
 
@@ -284,13 +278,13 @@ def main():
     parser.add_argument(
         "--input",
         type=str,
-        default="data/raw/economic/osm/raw/brazil-latest.osm.pbf",
+        default="data/raw/osm/raw/brazil-latest.osm.pbf",
         help="Input OSM PBF file",
     )
     parser.add_argument(
         "--output",
         type=str,
-        default="data/raw/economic/osm/roads/road_network.geojson",
+        default="data/raw/osm/roads/road_network.geojson",
         help="Output file path",
     )
     parser.add_argument(

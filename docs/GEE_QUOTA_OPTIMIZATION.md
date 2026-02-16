@@ -1,8 +1,8 @@
 # Google Earth Engine Quota Optimization Guide
 
-## 📊 Your Free Tier Quotas
+## 📊 Free Tier Quotas
 
-Based on your GEE account limits:
+Based on our GEE account limits:
 
 | Quota                                 | Limit     | What It Means                        |
 | ------------------------------------- | --------- | ------------------------------------ |
@@ -12,11 +12,9 @@ Based on your GEE account limits:
 | **Read requests per minute**          | 6,000     | API calls per minute                 |
 | **Read requests per minute per user** | 6,000     | Same as above (single user)          |
 
-**Good news:** These limits are **very generous** for your project! ✅
-
 ---
 
-## 🧮 Calculating Your Usage
+## 🧮 Calculating the Usage
 
 ### For Brazilian Municipalities:
 
@@ -25,15 +23,13 @@ Based on your GEE account limits:
 - **Total requests needed:** ~11,140 - 16,710
 - **Percentage of daily quota:** ~1.3%
 
-**Conclusion:** You can easily process all municipalities in a single run! 🎉
-
 ---
 
 ## ⚙️ Optimized Configuration
 
-### Current Configuration (Already Optimized!)
+### Current Configuration
 
-Your `config/gee_config.yaml` is already well-configured:
+`config/gee_config.yaml`:
 
 ```yaml
 processing:
@@ -54,7 +50,7 @@ processing:
 2. **Max workers: 2**
     - 2 parallel threads
     - Total: ~200-300 requests/minute
-    - Only 5% of your quota!
+    - Only 5% of the quota!
 
 3. **Retry logic**
     - Handles temporary failures gracefully
@@ -80,7 +76,7 @@ MAX_WORKERS=1
 
 ---
 
-### Scenario 2: Balanced (Recommended) ✅
+### Scenario 2: Balanced (Recommended)
 
 **Best for:** Most users, stable internet
 
@@ -94,7 +90,7 @@ MAX_WORKERS=2
 **Estimated time:** 1-2 hours
 **Quota usage:** ~5% of limits
 
-**This is your current setting!**
+**This is our setting!**
 
 ---
 
@@ -136,7 +132,7 @@ WARNING: Rate limit exceeded, retrying in 5 seconds...
 
 ---
 
-## 📈 Monitoring Your Usage
+## 📈 Monitoring the Usage
 
 ### During Execution:
 
@@ -167,7 +163,7 @@ Look for:
 
 ### To Change Settings:
 
-**Option 1: Edit `.env` file (Recommended)**
+**Option 1: Edit `.env` file**
 
 ```bash
 notepad .env
@@ -200,7 +196,7 @@ processing:
 
 ### 1. Start Conservative
 
-For your first run:
+For a first run:
 
 ```env
 BATCH_SIZE=25
@@ -222,9 +218,9 @@ Keep an eye on:
 Before processing all municipalities, test with a small subset:
 
 ```python
-# Edit extract_embeddings_efficient.py
-# Line ~300, add:
-municipality_list = municipality_list.slice(0, 10)  # Test with 10 municipalities
+# Edit extract_embeddings.py
+# Modify the municipality list to test with fewer municipalities
+# This helps verify configuration before full run
 ```
 
 ### 4. Run During Off-Peak Hours
@@ -295,7 +291,6 @@ For **5,570 Brazilian municipalities**:
 
 **Expected results:**
 
-- ✅ Completes in 1-2 hours
 - ✅ Uses only ~5% of quotas
 - ✅ Minimal risk of rate limits
 - ✅ Automatic error recovery
@@ -326,16 +321,16 @@ After run:
 
 ---
 
-## 🚀 You're Ready!
+## 🚀 Now, you're Ready!
 
-Your current configuration is **optimal** for the free tier. Just run:
+Just run:
 
 ```bash
-python src/1_collection/gee/extract_embeddings_efficient.py --mode streaming
+python src/satellite/extract_embeddings.py
 ```
 
 And let it run! The script will handle everything automatically. ✨
 
 ---
 
-**Questions?** Check the troubleshooting section in `SETUP_INSTRUCTIONS.md`
+**Questions?** Check the troubleshooting sections in `README.md` or `docs/QUICKSTART.md`

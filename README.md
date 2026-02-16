@@ -1,19 +1,15 @@
-# iGuide Project - Environmental Analysis Pipeline
+# iGuide Project - Brazilian Successful Areas
 
 ## Overview
 
-This project implements a **complete data science pipeline** for environmental analysis of Brazilian municipalities using satellite imagery and multi-source data integration.
+This project collects and analyzes geospatial data for Brazilian municipalities to identify successful areas using:
 
-### Pipeline Phases
+- **Satellite imagery** from Google Earth Engine
+- **OpenStreetMap (OSM)** data for infrastructure and points of interest
 
-1. **📡 Data Collection** - Gather data from multiple sources (satellite, demographic, economic, environmental)
-2. **🔗 Data Integration** - Merge datasets and ensure data quality
-3. **⚙️ Feature Engineering** - Extract and transform features
-4. **🤖 Machine Learning** - Train and evaluate models
-5. **📊 Statistical Analysis** - Perform in-depth analysis
-6. **📈 Visualization** - Create plots, maps, and dashboards
+The data collected can be used for environmental analysis, urban planning, and machine learning applications.
 
-**Current Status**: Phase 1 (Data Collection - Satellite) ✅ Complete
+**Current Status**: Data Collection ✅ Complete
 
 ---
 
@@ -21,53 +17,53 @@ This project implements a **complete data science pipeline** for environmental a
 
 ```
 iguide_project/
-├── 📂 src/                           # Source code (organized by pipeline phase)
-│   ├── 1_collection/                 # Phase 1: Data Collection
-│   │   ├── gee/                      # ✅ Satellite data (GEE)
-│   │   ├── demographic/              # 🔄 Census data
-│   │   ├── economic/                 # 🔄 Economic indicators
-│   │   └── environmental/            # 🔄 Climate/vegetation data
-│   ├── 2_integration/                # Phase 2: Data Integration
-│   ├── 3_features/                   # Phase 3: Feature Engineering
-│   ├── 4_modeling/                   # Phase 4: Machine Learning
-│   ├── 5_analysis/                   # Phase 5: Statistical Analysis
-│   ├── 6_visualization/              # Phase 6: Visualization
-│   ├── preprocessing/                # Data preprocessing utilities
-│   └── utils/                        # Shared utilities
-├── 📂 data/                          # Data storage
-│   ├── raw/                          # Raw data by source
-│   ├── processed/                    # Cleaned data
-│   ├── integrated/                   # Merged datasets
-│   └── features/                     # Engineered features
-├── 📂 models/                        # Trained models
-├── 📂 outputs/                       # Analysis outputs
-│   ├── figures/                      # Plots and maps
-│   ├── reports/                      # Analysis reports
-│   └── tables/                       # Result tables
-├── 📂 notebooks/                     # Jupyter notebooks
-├── 📂 config/                        # Configuration files
-├── 📂 sql/                           # SQL scripts
-├── 📂 scripts/                       # Pipeline automation
-├── 📂 tests/                         # Unit tests
-└── 📂 docs/                          # Documentation
+├── 📂 src/                    # Source code
+│   ├── satellite/             # Satellite data (Google Earth Engine)
+│   │   ├── extract_embeddings.py
+│   │   └── __init__.py
+│   ├── osm/                   # OpenStreetMap data
+│   │   ├── collect_osm_data.py
+│   │   ├── extract_pois.py
+│   │   ├── extract_roads.py
+│   │   └── __init__.py
+│   └── utils/                 # Shared utilities
+├── 📂 data/                   # Data storage
+│   ├── raw/                   # Raw data
+│   └── processed/             # Processed data
+├── 📂 config/                 # Configuration files
+├── 📂 docs/                   # Documentation
+└── 📂 logs/                   # Log files
 ```
 
-**See `docs/PROJECT_STRUCTURE.md` for detailed structure documentation.**
+---
 
 ## Features
+
+### Satellite Data
 
 - **Satellite Data Extraction**: Compute mean 64-dimensional embeddings from Google Satellite Embedding V1
 - **Municipality Coverage**: Process all Brazilian municipalities
 - **Automated Pipeline**: Python/GEE integration for seamless data extraction
 - **Cloud Storage**: Direct output to Google Drive
 
+### OSM Data
+
+- **Road Network Extraction**: Extract road infrastructure from OpenStreetMap
+- **POI Extraction**: Collect points of interest (amenities, shops, services)
+- **Infrastructure Mapping**: Analyze commercial density and urban features
+- **PBF Processing**: Efficient processing of large OSM PBF files
+
+---
+
 ## Prerequisites
 
 - Python 3.8+
-- Google Earth Engine account
+- Google Earth Engine account (for satellite data)
 - Google Cloud Project (for GEE authentication)
-- Google Drive access
-- **PostgreSQL 12+** (for database storage)
+- Google Drive access (optional, for cloud storage)
+- **osmium** library (for OSM data processing)
+
+---
 
 ## Installation
 
@@ -102,7 +98,7 @@ cp .env.example .env
 Edit `.env` with your configuration:
 
 - Google Earth Engine project ID
-- Google Drive folder ID
+- Google Drive folder ID (optional)
 - Other necessary credentials
 
 ### 5. Authenticate Google Earth Engine
@@ -111,68 +107,81 @@ Edit `.env` with your configuration:
 earthengine authenticate
 ```
 
+---
+
 ## Usage
 
-### Extract Satellite Embeddings
+### 1. Satellite Data Collection
 
-#### Option 1: Memory-Efficient Extraction (⭐ Recommended for Production)
-
-For large datasets or systems with limited memory:
+Extract satellite embeddings for Brazilian municipalities:
 
 ```bash
-# Streaming mode (incremental writes, minimal memory)
-python src/gee/extract_embeddings_efficient.py --mode streaming
-
-# Server-side mode (processing on GEE servers)
-python src/gee/extract_embeddings_efficient.py --mode server-side
-
-# Both modes
-python src/gee/extract_embeddings_efficient.py --mode both
+python src/satellite/extract_embeddings.py
 ```
 
-**Benefits:**
-
-- Constant memory usage (~200MB)
-- Can handle unlimited dataset sizes
-- Writes results incrementally
-- Better for long-running tasks
-
-#### Option 2: Standard Extraction
-
-For small datasets or systems with ample RAM:
-
-```bash
-python src/gee/extract_embeddings.py
-```
-
-**Note:** See `docs/MEMORY_OPTIMIZATION.md` for detailed comparison and recommendations.
-
-### What the Extraction Does
+**What it does:**
 
 1. Connect to Google Earth Engine
 2. Load Brazilian municipality boundaries
 3. Compute mean 64-dimensional embeddings for each municipality
 4. Export results to CSV (and optionally Google Drive)
 
-### Data Preprocessing
+**Features:**
 
-Process the exported CSV data:
+- Memory-efficient processing
+- Batch processing support
+- Progress tracking
+- Error handling and retry logic
+
+### 2. OSM Data Collection
+
+#### Collect OSM Data (Roads + POIs)
 
 ```bash
-python src/preprocessing/process_satellite_data.py data/processed/municipality_embeddings_*.csv
+# Download and extract all OSM data for Brazil
+python src/osm/collect_osm_data.py
+
+# This will:
+# 1. Download Brazil OSM PBF file
+# 2. Extract road networks
+# 3. Extract points of interest (POIs)
+# 4. Save results to data/processed/
 ```
+
+#### Extract Only Roads
+
+```bash
+python src/osm/extract_roads.py <path_to_pbf_file>
+```
+
+#### Extract Only POIs
+
+```bash
+python src/osm/extract_pois.py <path_to_pbf_file>
+```
+
+**For detailed OSM extraction guides, see:**
+
+- `src/osm/README.md` - Overview
+- `src/osm/QUICKSTART.md` - Quick start guide
+- `src/osm/road_extraction_summary.md` - Road extraction details
+- `src/osm/poi_extraction_guide.md` - POI extraction details
+
+---
 
 ## Configuration
 
 Configuration files are located in the `config/` directory:
 
 - `gee_config.yaml`: Google Earth Engine settings
-- `municipalities.yaml`: Municipality boundary settings
-- `export_config.yaml`: Export and output settings
+
+---
 
 ## Output
 
-The main output is a CSV file with the following structure:
+### Satellite Data Output
+
+CSV file with the following structure:
 
 | Column                      | Description                               |
 | --------------------------- | ----------------------------------------- |
@@ -182,104 +191,24 @@ The main output is a CSV file with the following structure:
 | embedding_0 to embedding_63 | 64-dimensional satellite embedding values |
 | extraction_date             | Date of data extraction                   |
 
-## Development
+### OSM Data Output
 
-### Running Tests
+- **Roads**: GeoJSON/CSV with road network features
+- **POIs**: GeoJSON/CSV with points of interest
 
-```bash
-pytest tests/
-```
+---
 
-### Code Style
+## Documentation
 
-This project follows PEP 8 guidelines. Format code using:
+Additional documentation is available in the `docs/` folder:
 
-```bash
-black src/
-flake8 src/
-```
+- `gee_api_reference.md` - Google Earth Engine API reference
+- `gee_quota_optimization.md` - Tips for optimizing GEE quota usage
+- `memory_optimization.md` - Memory optimization strategies
+- `quickstart.md` - Quick start guide
+- `satellite_data_update.md` - Satellite data update procedures
 
-## Database Integration (PostgreSQL)
-
-### Setup PostgreSQL
-
-**Detailed guide**: See `docs/POSTGRESQL_SETUP.md`
-
-#### Quick Setup
-
-1. **Install PostgreSQL** (if not already installed)
-    - Download from [postgresql.org](https://www.postgresql.org/download/)
-    - Or use package manager: `choco install postgresql` (Windows)
-
-2. **Create Database and User**
-
-    ```bash
-    # Connect as postgres superuser
-    psql -U postgres
-
-    # In psql, run:
-    CREATE DATABASE iguide_db;
-    CREATE USER iguide_user WITH PASSWORD 'your_secure_password';
-    GRANT ALL PRIVILEGES ON DATABASE iguide_db TO iguide_user;
-    \q
-    ```
-
-3. **Configure Environment Variables**
-
-    Edit `.env` file:
-
-    ```env
-    DB_HOST=localhost
-    DB_PORT=5432
-    DB_NAME=iguide_db
-    DB_USER=iguide_user
-    DB_PASSWORD=your_secure_password
-    ```
-
-4. **Create Database Tables**
-
-    ```bash
-    python src/preprocessing/database_integration.py --create-tables
-    ```
-
-5. **Test Connection**
-    ```bash
-    python test_db_connection.py
-    ```
-
-### Database Operations
-
-#### Ingest Data
-
-```bash
-python src/preprocessing/database_integration.py --ingest data/processed/your_file.csv
-```
-
-#### View Statistics
-
-```bash
-python src/preprocessing/database_integration.py --stats
-```
-
-#### Query Data
-
-Use the sample queries in `sql/sample_queries.sql` or connect with any PostgreSQL client:
-
-```bash
-psql -U iguide_user -d iguide_db
-```
-
-### Database Schema
-
-The satellite data table infrastructure includes:
-
-- **Table Schema**: Optimized for storing municipality embeddings (64 dimensions)
-- **Indexing**: Efficient querying by municipality, state, and date
-- **Data Types**: Appropriate types for embeddings and metadata
-- **Views**: Pre-built views for common queries
-- **Functions**: Utility functions for data analysis
-
-See `docs/database_schema.md` for detailed schema information.
+---
 
 ## Troubleshooting
 
@@ -295,23 +224,26 @@ earthengine authenticate --force
 
 For large-scale processing, adjust batch size in `config/gee_config.yaml`
 
-## Contributing
+### OSM Processing Issues
 
-1. Create a feature branch
-2. Make your changes
-3. Run tests
-4. Submit a pull request
+Check the log files in the `logs/` directory:
 
-## License
+- `osm_collection.log`
+- `poi_extraction.log`
+- `road_extraction.log`
 
-[Specify your license here]
-
-## Contact
-
-[Your contact information]
+---
 
 ## Acknowledgments
 
 - Google Earth Engine for satellite data access
-- IBGE for Brazilian municipality boundariesess
+- OpenStreetMap contributors for infrastructure data
 - IBGE for Brazilian municipality boundaries
+
+---
+
+## Contact
+
+Jaiany Rocha - jaiany.trindade@ufrgs.br
+Devika Jain
+Vinicius Brei - brei@ufrgs.brr>

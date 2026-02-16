@@ -21,13 +21,7 @@ The Google Satellite Embedding V1 dataset provides pre-computed embeddings from 
 
 ### Brazilian Municipality Boundaries
 
-For Brazilian administrative boundaries, you can use:
-
-1. **FAO GAUL** (Global Administrative Unit Layers)
-    - Asset: `FAO/GAUL/2015/level2`
-    - Filter by: `ADM0_NAME = 'Brazil'`
-
-2. **IBGE Data** (Custom Upload)
+1. **IBGE Data** (Custom Upload)
     - Download from: [IBGE Downloads](https://www.ibge.gov.br/geociencias/downloads-geociencias.html)
     - Upload as GEE asset
     - Reference in your scripts

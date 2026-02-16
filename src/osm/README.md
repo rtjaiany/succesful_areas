@@ -1,14 +1,14 @@
-# Economic Data Collection
+# OSM Data Collection
 
-This module handles collection of economic indicators from various sources to complement satellite data analysis.
+This module handles collection of infrastructure and points of interest data from OpenStreetMap to complement satellite data analysis.
 
-## Phase 3: OpenStreetMap (OSM) Data Acquisition
+## OpenStreetMap (OSM) Data Acquisition
 
 ### Goal
 
 Extract economic indicators from OpenStreetMap data to complement satellite-based analysis.
 
-### 3.1 Collection & Aggregation (Current Phase)
+### Collection & Aggregation
 
 #### Data Source
 
@@ -35,13 +35,13 @@ Extract economic indicators from OpenStreetMap data to complement satellite-base
 
 ```bash
 # Download Brazil OSM data from Geofabrik (~1-2 GB)
-python src/1_collection/economic/collect_osm_data.py --source geofabrik
+python src/osm/collect_osm_data.py --source geofabrik
 
 # Download only (skip extraction)
-python src/1_collection/economic/collect_osm_data.py --download-only
+python src/osm/collect_osm_data.py --download-only
 
 # Use existing download
-python src/1_collection/economic/collect_osm_data.py --skip-download
+python src/osm/collect_osm_data.py --skip-download
 ```
 
 ### Step 2: Extract Features (Requires Additional Setup)
@@ -53,13 +53,13 @@ The feature extraction step requires the `osmium` library:
 pip install osmium
 
 # Run extraction
-python src/1_collection/economic/collect_osm_data.py --skip-download
+python src/osm/collect_osm_data.py --skip-download
 ```
 
 ## Output Structure
 
 ```text
-data/raw/economic/osm/
+data/raw/osm/
 ├── raw/
 │   └── brazil-latest.osm.pbf          # Raw OSM data (~1-2 GB)
 ├── pois/
@@ -70,14 +70,14 @@ data/raw/economic/osm/
 
 ## Data Processing Pipeline
 
-### Phase 3.1: Collection (Current)
+### Collection
 
 1. ✅ Download Brazil OSM data from Geofabrik
 2. ✅ Extract commercial POIs (banks, shops, amenities)
 3. ✅ Extract road network (highways, roads)
 4. ✅ Save as GeoJSON/GeoPackage
 
-### Phase 3.2: Aggregation (Next)
+### Aggregation (Next)
 
 1. Load municipality boundaries (IBGE)
 2. Perform Point-in-Polygon operations

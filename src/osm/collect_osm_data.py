@@ -4,12 +4,12 @@ OpenStreetMap (OSM) Data Collection for Brazil
 This script downloads OSM data for Brazil and prepares it for economic indicator extraction.
 Focus: Commercial density and infrastructure metrics per municipality.
 
-Phase 3.1: Data Collection
+Data Collection
 - Download OSM data for Brazil
 - Extract relevant features (POIs, roads, amenities)
 - Save raw data for later aggregation
 
-Author: i-guide project
+Authors: Jaiany Rocha, Devika Jain and Vinicius Brei
 Date: 2026-02-15
 """
 
@@ -87,7 +87,7 @@ class OSMDataCollector:
         ]
     }
 
-    def __init__(self, output_dir: str = "data/raw/economic/osm"):
+    def __init__(self, output_dir: str = "data/raw/osm"):
         """
         Initialize the OSM data collector.
 
@@ -236,7 +236,7 @@ class OSMDataCollector:
         except Exception as e:
             logger.error(f"POI extraction failed: {e}")
             logger.info("You can also run POI extraction separately:")
-            logger.info("  python src/1_collection/economic/extract_pois.py")
+            logger.info("  python src/osm/extract_pois.py")
             raise
 
     def extract_roads(
@@ -278,7 +278,7 @@ class OSMDataCollector:
         except Exception as e:
             logger.error(f"Road extraction failed: {e}")
             logger.info("You can also run road extraction separately:")
-            logger.info("  python src/1_collection/economic/extract_roads.py")
+            logger.info("  python src/osm/extract_roads.py")
             raise
 
     def save_data(self, gdf: gpd.GeoDataFrame, name: str, format: str = "geojson"):
@@ -350,7 +350,7 @@ def main():
     parser.add_argument(
         "--output-dir",
         type=str,
-        default="data/raw/economic/osm",
+        default="data/raw/osm",
         help="Output directory for OSM data",
     )
     parser.add_argument(
@@ -406,7 +406,7 @@ def main():
         except Exception as e:
             logger.error(f"POI extraction failed: {e}")
             logger.info("\nYou can run POI extraction separately:")
-            logger.info("  python src/1_collection/economic/extract_pois.py")
+            logger.info("  python src/osm/extract_pois.py")
 
         try:
             # Extract roads
@@ -420,14 +420,14 @@ def main():
         except Exception as e:
             logger.error(f"Road extraction failed: {e}")
             logger.info("\nYou can run road extraction separately:")
-            logger.info("  python src/1_collection/economic/extract_roads.py")
+            logger.info("  python src/osm/extract_roads.py")
 
     except ImportError:
         logger.warning("osmium not installed. Skipping feature extraction.")
         logger.info("\nTo extract features:")
         logger.info("1. Install osmium: pip install osmium")
         logger.info("2. Run POI extraction:")
-        logger.info("   python src/1_collection/economic/extract_pois.py")
+        logger.info("   python src/osm/extract_pois.py")
         logger.info(
             "3. Or re-run this script: python collect_osm_data.py --skip-download"
         )
