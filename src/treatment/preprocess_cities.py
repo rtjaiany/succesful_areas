@@ -7,6 +7,7 @@ renames them, and merges everything into a single processed CSV.
 """
 
 import os
+import unicodedata
 import pandas as pd
 from pathlib import Path
 from loguru import logger
@@ -116,11 +117,13 @@ class CitiesPreprocessor:
                 logger.error(f"Failed to process {file_path.name}: {e}")
 
         if integrated_df is not None:
-            # Ensure cod_ibge is the first column (already is by construction, but safe to enforce)
-            cols = [self.TARGET_ID_COL] + [
-                c for c in integrated_df.columns if c != self.TARGET_ID_COL
-            ]
-            integrated_df = integrated_df[cols]
+            # 5. Add Municipality Name and State Name
+            integrated_df = self._add_municipality_info(integrated_df)
+
+            # Ensure cod_ibge is the first column, followed by name and state
+            fixed_cols = [self.TARGET_ID_COL, "municipality_name", "state_name"]
+            other_cols = [c for c in integrated_df.columns if c not in fixed_cols]
+            integrated_df = integrated_df[fixed_cols + other_cols]
 
             output_path = self.processed_dir / "integrated_cities_data.csv"
             integrated_df.to_csv(output_path, index=False)
@@ -129,12 +132,72 @@ class CitiesPreprocessor:
                 f"PREPROCESSING COMPLETE! Final file saved to: {output_path}"
             )
             logger.info(f"Total municipalities: {len(integrated_df)}")
-            logger.info(f"Total features: {len(integrated_df.columns) - 1}")
+            logger.info(
+                f"Total features: {len(integrated_df.columns) - 3}"
+            )  # Subtracting id, name, state
             logger.info("=" * 50)
         else:
             logger.error(
                 "No data was integrated. Check your source files and dictionary."
             )
+
+    def _clean_text(self, text):
+        """
+        Normalizes text: removes accents, converts to title case, and strips whitespace.
+        Also handles potential encoding artifacts/symbols.
+        """
+        if pd.isna(text) or not isinstance(text, str):
+            return text
+
+        # Remove accents
+        text = "".join(
+            c
+            for c in unicodedata.normalize("NFD", text)
+            if unicodedata.category(c) != "Mn"
+        )
+
+        # Strip and clean artifacts
+        text = text.strip().title()
+
+        return text
+
+    def _add_municipality_info(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Adds municipality and state names based on cod_ibge.
+        Uses GeoSES_BR.xlsx for state and Cidades IBGE.xlsx for city name.
+        """
+        logger.info("Enriching data with municipality and state names...")
+
+        try:
+            # Load State info from GeoSES
+            geoses_path = self.raw_dir / "GeoSES_BR.xlsx"
+            states_df = pd.read_excel(geoses_path)[["MUNIC_CODE7", "FU_NAME"]]
+            states_df["MUNIC_CODE7"] = states_df["MUNIC_CODE7"].astype(str).str.zfill(7)
+            state_mapping = dict(zip(states_df["MUNIC_CODE7"], states_df["FU_NAME"]))
+
+            # Load City info from Cidades IBGE
+            cidades_path = self.raw_dir / "Cidades IBGE.xlsx"
+            cities_df = pd.read_excel(cidades_path)[["CD_MUN", "MUNICIPIO"]]
+            cities_df["CD_MUN"] = (
+                cities_df["CD_MUN"].astype(str).str.split(".").str[0].str.zfill(7)
+            )
+            city_mapping = dict(zip(cities_df["CD_MUN"], cities_df["MUNICIPIO"]))
+
+            # Map values
+            df["municipality_name"] = df[self.TARGET_ID_COL].map(city_mapping)
+            df["state_name"] = df[self.TARGET_ID_COL].map(state_mapping)
+
+            # Clean names (remove accents and symbols)
+            df["municipality_name"] = df["municipality_name"].apply(self._clean_text)
+            df["state_name"] = df["state_name"].apply(self._clean_text)
+
+            return df
+
+        except Exception as e:
+            logger.warning(f"Failed to add municipality/state names: {e}")
+            df["municipality_name"] = "Unknown"
+            df["state_name"] = "Unknown"
+            return df
 
 
 def main():
