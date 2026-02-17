@@ -192,15 +192,38 @@ Configuration files are located in the `config/` directory:
 
 ### Satellite Data Output
 
-CSV file with the following structure:
+The output structure depends on the extraction mode used:
+
+#### 1. Local Streaming (Sentinel-2 Features)
+
+This mode extracts spectral bands and vegetation indices. CSV file structure:
+
+| Column            | Description                                  |
+| ----------------- | -------------------------------------------- |
+| municipality_id   | Unique code for the municipality             |
+| municipality_name | Name of the municipality                     |
+| state_name        | Full name of the state                       |
+| state_code        | Numeric state code                           |
+| blue, green, red  | Spectral bands (B2, B3, B4)                  |
+| nir, swir_1, etc. | Near-infrared and Short-wave infrared bands  |
+| ndvi, evi, savi   | Vegetation and soil indices                  |
+| ndwi, mndwi       | Water indices                                |
+| ndbi, urban_index | Built-up area indices                        |
+| image_count       | Number of scenes used for the composite      |
+| extraction_date   | Date and time of extraction                  |
+| data_source       | Data source and year (e.g., Sentinel-2 2023) |
+
+#### 2. Server-side Export (Building Embeddings)
+
+This mode (using `--mode server-side`) exports the 64-dimensional embeddings from the Google Open Buildings dataset.
 
 | Column                      | Description                               |
 | --------------------------- | ----------------------------------------- |
 | municipality_id             | Unique identifier for the municipality    |
 | municipality_name           | Name of the municipality                  |
-| state                       | State code                                |
 | embedding_0 to embedding_63 | 64-dimensional satellite embedding values |
 | extraction_date             | Date of data extraction                   |
+| data_source                 | Google Satellite Embedding V1             |
 
 ### OSM Data Output
 
@@ -257,4 +280,4 @@ Check the log files in the `logs/` directory:
 
 - Jaiany Rocha - jaiany.trindade@ufrgs.br
 - Devika Jain
-- Vinicius Brei - brei@ufrgs.brr>>>
+- Vinicius Brei - brei@ufrgs.br
