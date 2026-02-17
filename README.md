@@ -268,11 +268,9 @@ Check the log files in the `logs/` directory:
 
 ---
 
-## Acknowledgments
+## Acknowledgments (Review in the end)
 
 - Google Earth Engine for satellite data access
-- OpenStreetMap contributors for infrastructure data
-- IBGE for Brazilian municipality boundaries
 
 ---
 
