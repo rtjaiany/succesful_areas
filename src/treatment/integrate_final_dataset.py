@@ -29,7 +29,7 @@ def main():
     BUSINESS_PATH = Path("data/raw/business_data/business_status.csv")
     
     # Embeddings: find the most recent CSV
-    EMBEDDINGS_DIR = Path("data/raw/satellite/")
+    EMBEDDINGS_DIR = Path("data/processed/")
     embedding_files = list(EMBEDDINGS_DIR.glob("municipality_embeddings_*.csv"))
     if embedding_files:
         EMBEDDINGS_PATH = sorted(embedding_files)[-1]

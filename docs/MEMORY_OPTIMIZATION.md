@@ -2,13 +2,51 @@
 
 ## Overview
 
-This guide explains memory optimization strategies for satellite data extraction.
+This guide details the specialized memory optimization strategies implemented to process Brazil-scale data on consumer-grade hardware (8GB RAM).
 
 ---
 
-## 🚀 Current Extraction Approach
+## 🛣️ Road Network Processing (`calculate_road_metrics.py`)
 
-### **Satellite Data Extraction** (`extract_embeddings.py`)
+Processing the national road network (6.4M+ segments) is the most memory-intensive part of the pipeline. The script is specifically designed to run on **8GB RAM** machines.
+
+### **Optimization Strategies:**
+
+#### 1. **Endpoint-First Topology Scan (Two Passes)**
+
+To avoid storing millions of coordinate pairs in memory (which would require >16GB RAM), the script uses a two-pass approach:
+
+- **Pass 1 (Phase 1):** Only stores the counts of start/end points of every road. (Low memory footprint).
+- **Pass 2 (Phase 2):** Scans road interiors and checks against the endpoint map from Pass 1 to identify T-junctions.
+- **Result:** Uses ~800MB - 1.2GB RAM instead of 10GB+.
+
+#### 2. **Junction Cache**
+
+Once Pass 1 is complete, the junctions are saved to `data/processed/intersections_cache.csv`. Subsequent runs will skip the 10-minute scan.
+
+#### 3. **Spatial Chunking with Resumption**
+
+Pass 2 (the spatial join with municipalities) processes roads in chunks (default 150,000).
+
+- **Checkpointing:** After each chunk, it saves a `.partial.csv` and a `.resume.txt`.
+- **Auto-Resume:** If the script is interrupted (e.g., OOM or power failure), it starts exactly where it left off.
+
+#### 4. **Aggressive Garbage Collection**
+
+The script manually triggers `gc.collect()` after processing each chunk to ensure memory spikes are cleared immediately.
+
+### **Best Settings for 8GB RAM**
+
+```bash
+python src/treatment/calculate_road_metrics.py --chunk-size 150000
+```
+
+- A smaller chunk size (e.g., 50,000) is safer but slower.
+- 150,000 is the recommended balance for 8GB RAM.
+
+---
+
+## 🛰️ Satellite Data Extraction (`extract_embeddings.py`)
 
 **Features:**
 
@@ -183,7 +221,7 @@ processing:
 
 The script automatically logs memory usage:
 
-```
+```text
 2026-02-16 17:00:00 | INFO | Memory: 180.5 MB (2.3% of system)
 2026-02-16 17:00:30 | INFO | Processing batch 1: municipalities 0-50
 2026-02-16 17:01:00 | INFO | Memory: 205.3 MB (2.6% of system) [Δ +24.8 MB]
@@ -214,6 +252,7 @@ The script automatically logs memory usage:
     ```
 
 3. Enable aggressive garbage collection:
+
     ```yaml
     memory:
         gc_interval: 10
@@ -240,6 +279,7 @@ The script automatically logs memory usage:
     ```
 
 3. Reduce write frequency:
+
     ```yaml
     processing:
         chunk_size: 50
@@ -261,6 +301,7 @@ The script automatically logs memory usage:
     ```
 
 2. Use minimal batch size:
+
     ```yaml
     processing:
         batch_size: 10

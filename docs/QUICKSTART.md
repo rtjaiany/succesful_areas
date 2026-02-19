@@ -1,207 +1,88 @@
 # Quick Start Guide
 
+This guide provides a step-by-step workflow to reproduce the master analytical dataset for Brazilian municipalities.
+
 ## Initial Setup
 
-### 1. Clone and Navigate
+### 1. Environment
 
 ```bash
 git clone <repository-url>
 cd iguide_project
-```
-
-### 2. Create Virtual Environment
-
-**Windows:**
-
-```bash
 python -m venv venv
-.\venv\Scripts\activate
-```
-
-**Linux/Mac:**
-
-```bash
-python -m venv venv
-source venv/bin/activate
-```
-
-### 3. Install Dependencies
-
-```bash
+source venv/bin/activate  # Windows: .\venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 4. Configure Environment
+### 2. Configuration
 
-Copy the example environment file:
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env` and add your credentials:
-
-```env
-GEE_PROJECT_ID=your-gee-project-id
-GDRIVE_FOLDER_ID=your-google-drive-folder-id  # Optional
-BATCH_SIZE=50
-MAX_WORKERS=2
-```
-
-### 5. Authenticate Google Earth Engine
-
-```bash
-earthengine authenticate
-```
-
-Follow the browser prompts to complete authentication.
+Copy `.env.example` to `.env` and set your `GEE_PROJECT_ID`.
 
 ---
 
-## Running Data Collection
+## The Data Pipeline
 
-### 1. Extract Satellite Data
+### Step 1: Boundaries (IBGE)
+
+Download the official 2022 municipality boundaries from IBGE:
 
 ```bash
-python src/satellite/extract_embeddings.py
+python src/ibge/collect_municipalities.py --year 2022
 ```
 
-This will:
+### Step 2: Physical Data Collection
 
-1. Connect to Google Earth Engine
-2. Load Brazilian municipality boundaries
-3. Extract satellite features for each municipality
-4. Save results to `data/processed/municipality_embeddings_YYYYMMDD_HHMMSS.csv`
-
-### 2. Collect OSM Data
+Extract satellite features and download OSM data:
 
 ```bash
+# A. Satellite Spectral Indices
+python src/satellite/extract_embeddings.py
+
+# B. OpenStreetMap geometries
 python src/osm/collect_osm_data.py
 ```
 
-This will:
+### Step 3: Infrastructure Analytics
 
-1. Download Brazil OSM PBF file
-2. Extract road networks
-3. Extract points of interest (POIs)
-4. Save results to `data/processed/`
+Calculate road network metrics. This step is optimized for **8GB RAM** using an endpoint-first topology scan.
+
+```bash
+python src/treatment/calculate_road_metrics.py --chunk-size 150000
+```
+
+### Step 4: Final Integration
+
+Unify all collected sources (OSM, GEE, IBGE, Socioeconomic) into one master CSV:
+
+```bash
+python src/treatment/integrate_final_dataset.py
+```
 
 ---
 
 ## Project Structure
 
-```
+```text
 iguide_project/
 ├── src/
-│   ├── satellite/              # Satellite data extraction
-│   │   └── extract_embeddings.py
-│   ├── osm/                    # OSM data extraction
-│   │   ├── collect_osm_data.py
-│   │   ├── extract_pois.py
-│   │   └── extract_roads.py
-│   └── utils/                  # Shared utilities
+│   ├── ibge/            # Boundary collection
+│   ├── satellite/       # GEE extraction
+│   ├── osm/             # PBF processing
+│   ├── treatment/       # Metrics & Integration
+│   └── utils/           # Shared helpers
 ├── data/
-│   ├── raw/                    # Raw downloaded data
-│   └── processed/              # Processed outputs
-├── config/                     # Configuration files
-├── docs/                       # Documentation
-└── logs/                       # Log files
+│   ├── raw/             # Raw source datasets
+│   └── processed/       # Final Unified Dataset
 ```
 
----
+## Output
 
-## Common Issues
+The final goal of this pipeline is:
+`data/processed/final_integrated_dataset.csv`
 
-### GEE Authentication Fails
+This file contains over 5,500 municipalities with:
 
-If authentication fails, try:
-
-```bash
-earthengine authenticate --force
-```
-
-### Missing Dependencies
-
-If you encounter import errors:
-
-```bash
-pip install -r requirements.txt --upgrade
-```
-
-### Memory Issues
-
-If you run out of memory, reduce batch size in `.env`:
-
-```env
-BATCH_SIZE=25
-MAX_WORKERS=1
-```
-
-### OSM Processing Issues
-
-Check the log files in `logs/`:
-
-- `osm_collection.log`
-- `poi_extraction.log`
-- `road_extraction.log`
-
----
-
-## Output Files
-
-### Satellite Data
-
-Location: `data/processed/municipality_embeddings_*.csv`
-
-Columns:
-
-- `municipality_id` - Unique identifier
-- `municipality_name` - Municipality name
-- `state` - State code
-- `embedding_0` to `embedding_63` - Satellite features
-- `extraction_date` - When data was extracted
-
-### OSM Data
-
-Location: `data/processed/`
-
-Files:
-
-- `brazil_roads_*.geojson` - Road network
-- `brazil_pois_*.geojson` - Points of interest
-
----
-
-## Additional Documentation
-
-- `README.md` - Main project documentation
-- `docs/gee_api_reference.md` - Google Earth Engine reference
-- `docs/memory_optimization.md` - Memory optimization tips
-- `docs/gee_quota_optimization.md` - GEE quota management
-- `src/osm/README.md` - OSM data collection guide
-
----
-
-## Quick Commands Reference
-
-```bash
-# Activate environment
-.\venv\Scripts\activate  # Windows
-source venv/bin/activate  # Linux/Mac
-
-# Run satellite extraction
-python src/satellite/extract_embeddings.py
-
-# Run OSM collection
-python src/osm/collect_osm_data.py
-
-# Extract only roads
-python src/osm/extract_roads.py <path_to_pbf>
-
-# Extract only POIs
-python src/osm/extract_pois.py <path_to_pbf>
-```
-
----
-
-**Ready to start collecting data!** 🚀
+- Road density ($km/km^2$)
+- Intersection counts
+- Spectral Indices (NDVI, EVI, NDBI)
+- Socioeconomic indicators (Active firms, average salary)

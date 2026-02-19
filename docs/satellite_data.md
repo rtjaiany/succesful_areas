@@ -1,197 +1,118 @@
 # 🛰️ Satellite Data Collection
 
-## What we use
+This module leverages **Google Earth Engine (GEE)** to extract high-resolution environmental and structural features for all Brazilian municipalities. We combine traditional spectral analysis with modern deep learning embeddings.
 
-We use **Sentinel-2 satellite imagery**, which is:
+## Data Sources
 
-✅ **Freely available** in Google Earth Engine  
-✅ **High quality** - 10m resolution  
-✅ **Well documented** and widely used  
-✅ **Perfect for environmental analysis**
+1.  **Sentinel-2 (L2A)**:
+    - ✅ **Freely available** 10m-30m resolution imagery.
+    - ✅ **Spectral Vigor**: Excellent for vegetation, water, and soil analysis.
+    - ✅ **Temporal Coverage**: 2015-present.
+2.  **Google Open Buildings Embeddings (V1)**:
+    - ✅ **Structural Insights**: 64-dimensional embeddings representing building patterns and urban density.
+    - ✅ **Deep Learning Based**: Derived from models trained on the Open Buildings dataset.
 
 ---
 
 ## Features Extracted
 
-We extract **18 meaningful satellite features** for each municipality:
+We extract a comprehensive set of features for each municipality:
 
-### 🌈 Spectral Bands (10 features)
+### 🌈 Spectral Bands (Sentinel-2)
 
-- **Blue** (B2) - Water bodies, atmospheric scattering
-- **Green** (B3) - Vegetation vigor
-- **Red** (B4) - Vegetation discrimination
-- **Red Edge 1-3** (B5-B7) - Vegetation health
-- **NIR** (B8) - Vegetation biomass
-- **NIR Narrow** (B8A) - Vegetation stress
-- **SWIR 1** (B11) - Moisture content
-- **SWIR 2** (B12) - Soil/rock discrimination
+- **Blue (B2), Green (B3), Red (B4)**: Visible spectrum.
+- **Red Edge 1-3 (B5-B7)**: Critical for vegetation health monitoring.
+- **NIR (B8) & NIR Narrow (B8A)**: Vegetation biomass and stress.
+- **SWIR 1-2 (B11-B12)**: Moisture content and soil discrimination.
 
-### 🌿 Vegetation Indices (3 features)
+### 🌿 Vegetation Indices
 
-- **NDVI** - Normalized Difference Vegetation Index (vegetation health)
-- **EVI** - Enhanced Vegetation Index (improved sensitivity)
-- **SAVI** - Soil-Adjusted Vegetation Index (accounts for soil brightness)
+- **NDVI**: Standard vegetation health index.
+- **EVI**: Enhanced index, less sensitive to atmospheric noise.
+- **SAVI**: Soil-Adjusted index for areas with sparse vegetation.
 
-### 💧 Water Indices (2 features)
+### 🏙️ Built-Up & Water Indices
 
-- **NDWI** - Normalized Difference Water Index (water bodies)
-- **MNDWI** - Modified NDWI (better for urban areas)
+- **NDBI**: Highlights urban and built-up land.
+- **Urban Index (UI)**: Differentiates structural density.
+- **NDWI / MNDWI**: Water body detection and moisture mapping.
 
-### 🏙️ Built-Up Indices (2 features)
+### 🏢 Structural Embeddings (Google Open Buildings)
 
-- **NDBI** - Normalized Difference Built-up Index (urban areas)
-- **UI** - Urban Index (built-up land)
-
-### 📊 Metadata (1 feature)
-
-- **image_count** - Number of Sentinel-2 images used
+- **Embedding 0-63**: 64 latent features capturing the "visual signature" of urban structures, density, and building types.
 
 ---
 
 ## How It Works
 
-### 1. Data Collection
+### 1. Spectral Extraction (Local Streaming)
 
-```python
-# For each municipality:
-1. Load Sentinel-2 images from 2023 (or 2022 if no 2023 data)
-2. Filter out cloudy images (< 20% cloud cover)
-3. Create median composite (reduces noise and clouds)
-4. Calculate all indices and features
-5. Compute mean values over municipality area
-6. Save to CSV
+- **Timeframe**: Uses 2023 median composites (auto-fallback to 2022).
+- **Quality**: Filters for <20% cloud cover.
+- **Memory Optimization**: Uses a streaming approach to write records directly to CSV, allowing the process to run on low-RAM (8GB) systems.
+
+### 2. Embedding Extraction (Server-side)
+
+- **Large-scale**: Since embeddings are heavy, the script supports GEE's server-side export to Google Drive.
+- **Consistency**: Uses the same municipality boundaries (GAUL level 2 or IBGE 2022).
+
+---
+
+## Configuration & Usage
+
+### Setup
+
+Ensure your `.env` has:
+
+```bash
+GEE_PROJECT_ID=your-project-id
+GDRIVE_FOLDER_ID=your-drive-folder-id (optional)
 ```
 
-### 2. Data Quality
+### Running the Script
 
-- **Cloud filtering**: Only uses images with <20% cloud cover
-- **Median composite**: Reduces impact of remaining clouds
-- **Fallback**: Uses 2022 data if 2023 unavailable
-- **Error handling**: Skips municipalities with no data
+```bash
+# Extract spectral indices locally (saves to data/processed/)
+python src/satellite/extract_embeddings.py --mode streaming
 
-### 3. Output Format
+# Export structural embeddings to Google Drive
+python src/satellite/extract_embeddings.py --mode server-side
+```
 
-Each row in the CSV will have:
+---
+
+## Output Format
+
+The final processed CSVs are saved in `data/processed/` with the following structure:
 
 ```csv
 municipality_id, municipality_name, state_name, state_code,
-blue, green, red, red_edge_1, red_edge_2, red_edge_3,
-nir, nir_narrow, swir_1, swir_2,
-ndvi, evi, savi, ndwi, mndwi, ndbi, urban_index,
+blue, green, red, ..., ndvi, evi, ..., nbdwi,
 image_count, extraction_date, data_source
 ```
 
 ---
 
-## Why This Is Better
+## Why This Multi-Source Approach?
 
-### Compared to Embeddings:
-
-| Feature                 | Embeddings    | Sentinel-2 Features     |
-| ----------------------- | ------------- | ----------------------- |
-| **Availability**        | ❌ Not public | ✅ Free & public        |
-| **Interpretability**    | ❌ Black box  | ✅ Clear meaning        |
-| **Scientific validity** | ⚠️ Unknown    | ✅ Well-established     |
-| **Customization**       | ❌ Fixed      | ✅ Can add more indices |
-| **Temporal coverage**   | ⚠️ Unknown    | ✅ 2015-present         |
-| **Resolution**          | ⚠️ Unknown    | ✅ 10m                  |
-
----
-
-## What These Features Tell Us
-
-### Environmental Health
-
-- **NDVI, EVI, SAVI**: Vegetation coverage and health
-- **NDWI, MNDWI**: Water availability and bodies
-
-### Land Use
-
-- **NDBI, UI**: Urban development and built-up areas
-- **NIR, SWIR**: Agricultural vs urban vs forest
-
-### Economic Indicators
-
-- High NDVI → Agricultural activity
-- High NDBI → Urban development
-- High NDWI → Water resources
-
----
-
-## Running the Updated Script
-
-### Command:
-
-```bash
-python src/satellite/extract_embeddings.py
-```
-
-### What to expect:
-
-1. ✅ Loads Brazilian municipalities (~5,570)
-2. ✅ For each municipality:
-    - Finds Sentinel-2 images
-    - Creates cloud-free composite
-    - Calculates 18 features
-    - Saves to CSV
-3. ✅ Progress updates every municipality
-4. ✅ Output: `data/raw/satellite/municipality_embeddings_YYYYMMDD_HHMMSS.csv`
-
-### Processing time:
-
-- **Estimated**: 2-4 hours for all municipalities
-- **Depends on**: Internet speed, GEE server load
-- **Can resume**: If interrupted, just run again (new file created)
-
----
-
-## Example Output
-
-```csv
-municipality_id,municipality_name,state_name,blue,green,red,ndvi,evi,ndbi,urban_index,...
-1100015,Alta Floresta D'Oeste,Rondônia,450,520,380,0.65,0.58,-0.15,-0.12,...
-1100023,Ariquemes,Rondônia,520,610,420,0.52,0.48,-0.08,-0.05,...
-```
-
----
-
-## Scientific References
-
-These indices are well-established in remote sensing:
-
-1. **NDVI**: Rouse et al. (1974) - Vegetation monitoring
-2. **EVI**: Huete et al. (2002) - Improved vegetation index
-3. **NDWI**: McFeeters (1996) - Water body detection
-4. **NDBI**: Zha et al. (2003) - Built-up area mapping
+| Feature              | Spectral Indices (Sentinel-2)      | Building Embeddings                  |
+| :------------------- | :--------------------------------- | :----------------------------------- |
+| **Interpretability** | ✅ High (We know what NDVI means)  | ⚠️ Low (Model-derived)               |
+| **Structure**        | ⚠️ Moderate (Based on reflectance) | ✅ High (Based on shapes/density)    |
+| **Scalability**      | ✅ Direct Streaming                | ✅ Server-side Export                |
+| **Use Case**         | Agriculture, Environmental Change  | Urban Planning, Economic Development |
 
 ---
 
 ## Troubleshooting
 
-### "No Sentinel-2 images found"
-
-- Some remote areas may have limited coverage
-- Script automatically tries 2022 if 2023 fails
-- These municipalities will be skipped (logged as warnings)
-
-### "Quota exceeded"
-
-- Unlikely with current settings (50 batch size, 2 workers)
-- If it happens, script will retry automatically
-- Can reduce batch size in `.env` if needed
-
-### "Computation timeout"
-
-- For very large municipalities
-- Script uses `bestEffort=True` to handle this
-- GEE will automatically reduce resolution if needed
+- **Quota Exceeded**: The script uses `batch_size: 50` to respect GEE's free tier quotas.
+- **Memory Issues**: Ensure you use `--mode streaming` for local runs.
+- **Missing Municipalities**: Check logs for municipalities with 100% cloud cover or no coverage in the selected year.
 
 ---
 
-## Summary
+## Scientific References
 
-✅ **Updated to use Sentinel-2** instead of unavailable embeddings  
-✅ **Extracting 18 meaningful features** instead of generic embeddings  
-✅ **Scientifically validated** indices used in research  
-✅ **Same ease of use** - just run the script!  
-✅ **Better for your analysis** - interpretable features
+1. **Sentinel-2 Indices**: Well-established indices like NDVI (Rouse, 1974) and EVI (Huete, 2002).
+2. **Open Buildings**: Sirko et al. (2021) - Continental-Scale Building Extraction.
