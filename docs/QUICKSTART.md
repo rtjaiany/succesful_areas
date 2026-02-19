@@ -98,8 +98,8 @@ iguide_project/
 
 The final outputs of this pipeline are:
 
-1.  **Base Dataset**: `data/processed/final_integrated_dataset.csv`
-2.  **Enhanced Dataset**: `data/processed/final_integrated_dataset_enhanced.csv` (includes density/km²)
+1. **Base Dataset**: `data/processed/final_integrated_dataset.csv`
+2. **Enhanced Dataset**: `data/processed/final_integrated_dataset_enhanced.csv` (includes density/km²)
 
 This file contains over 5,500 municipalities with:
 
