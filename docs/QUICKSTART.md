@@ -65,6 +65,17 @@ Unify all collected sources (OSM, GEE, IBGE, Socioeconomic) into one master CSV:
 python src/treatment/integrate_final_dataset.py
 ```
 
+### Step 5: Exploratory Data Analysis & Enhancement
+
+Run the EDA notebook to generate density metrics and save the enhanced dataset:
+
+```bash
+# Execute standalone script
+python src/data_analysis/eda.py
+# Or run the notebook interactively
+jupyter notebook src/data_analysis/eda.ipynb
+```
+
 ---
 
 ## Project Structure
@@ -76,6 +87,7 @@ iguide_project/
 │   ├── satellite/       # GEE extraction
 │   ├── osm/             # PBF processing
 │   ├── treatment/       # Metrics & Integration
+│   ├── data_analysis/   # EDA & Visualization
 │   └── utils/           # Shared helpers
 ├── data/
 │   ├── raw/             # Raw source datasets
@@ -84,8 +96,10 @@ iguide_project/
 
 ## Output
 
-The final goal of this pipeline is:
-`data/processed/final_integrated_dataset.csv`
+The final outputs of this pipeline are:
+
+1.  **Base Dataset**: `data/processed/final_integrated_dataset.csv`
+2.  **Enhanced Dataset**: `data/processed/final_integrated_dataset_enhanced.csv` (includes density/km²)
 
 This file contains over 5,500 municipalities with:
 

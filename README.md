@@ -15,7 +15,7 @@ The data collected can be used for environmental analysis, urban planning, and m
 
 ## Project Structure
 
-```
+```text
 iguide_project/
 ├── 📂 src/                    # Source code
 │   ├── satellite/             # Satellite data (Google Earth Engine)
@@ -30,6 +30,9 @@ iguide_project/
 │   │   ├── calculate_road_metrics.py
 │   │   ├── integrate_final_dataset.py
 │   │   └── preprocess_cities.py
+│   ├── data_analysis/         # Exploratory Data Analysis
+│   │   ├── eda.ipnyb          # Interactive Notebook
+│   │   └── eda.py             # Script version of EDA
 │   └── utils/                 # Shared utilities
 ├── 📂 data/                   # Data storage
 │   ├── raw/                   # Raw datasets (Shapes, Business, etc.)
@@ -59,6 +62,12 @@ iguide_project/
 
 - **Unified Integration**: Robust join logic (CD_MUN + Name/UF) to merge all sources.
 - **Socioeconomic Preprocessing**: Standardization of diverse municipality-level metrics.
+
+### Analysis & Visualization
+
+- **Business Density**: Analysis of firm concentration (Active/Failed per km²) and HQ clustering.
+- **Quality of Life Correlation**: Investigating links between green areas (NDVI), wealth, and infrastructure.
+- **Regional Profiling**: Comparative radar charts for the 5 Brazilian macro-regions.
 
 ---
 
@@ -129,14 +138,33 @@ python src/treatment/calculate_road_metrics.py --chunk-size 150000
 python src/treatment/integrate_final_dataset.py
 ```
 
+### Step 5: Exploratory Data Analysis
+
+Run the EDA notebook to generate insights, visualizations, and the enhanced dataset with density metrics.
+
+```bash
+# Run via Jupyter
+jupyter notebook src/data_analysis/eda.ipynb
+
+# Or execute the script directly
+python src/data_analysis/eda.py
+```
+
 ---
 
 ## Output
 
 ### Final Integrated Dataset
 
-Location: `data/processed/final_integrated_dataset.csv`
-Contains: Unified indicators for all 5,500+ Brazilian municipalities (Roads, Indices, Business metrics).
+## Location: `data/processed/final_integrated_dataset.csv`
+
+## 📚 Detailed Documentation
+
+- **[Quick Start Guide](docs/QUICKSTART.md)**: Extended setup and execution instructions.
+- **[Satellite Data](docs/satellite_data.md)**: Deep dive into GEE extraction, indices, and embeddings.
+- **[Socioeconomic Data](docs/socioeconomic_data.md)**: Business data sources, variables, and processing.
+- **[Memory Optimization](docs/MEMORY_OPTIMIZATION.md)**: How we handle 8GB+ road networks on standard RAM.
+- **[GEE Quota Management](docs/gee_quota_optimization.md)**: Strategies for handling Earth Engine limits.
 
 ---
 
