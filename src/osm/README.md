@@ -8,159 +8,84 @@ This module handles collection of infrastructure and points of interest data fro
 
 Extract economic indicators from OpenStreetMap data to complement satellite-based analysis.
 
-### Collection & Aggregation
+### Features
 
-#### Data Source
-
-- **Primary**: Geofabrik OSM extracts for Brazil
-- **Alternative**: Overpass API (for smaller queries)
-- **Update Frequency**: Daily extracts available
-
-#### Economic Indicators
-
-1. **Commercial Density**
-    - Banks and ATMs
-    - Shops (supermarkets, malls, retail)
-    - Marketplaces
-    - Offices (companies, financial institutions)
-
-2. **Infrastructure**
-    - Road network (highways, primary, secondary roads)
-    - Road density per municipality
-    - Total road length per municipality
+1. **Road Network Analysis**:
+    - Total road length per municipality (km).
+    - Road density (km per km²).
+    - Intersection counts (junctions with degree $\ge$ 3).
+    - Highway proximity presence.
+2. **POI Analysis**:
+    - Commercial density (Banks, Shops, Offices).
+    - Social infrastructure (Schools, Hospitals).
 
 ## Usage
 
 ### Step 1: Download OSM Data for Brazil
 
 ```bash
-# Download Brazil OSM data from Geofabrik (~1-2 GB)
 python src/osm/collect_osm_data.py --source geofabrik
-
-# Download only (skip extraction)
-python src/osm/collect_osm_data.py --download-only
-
-# Use existing download
-python src/osm/collect_osm_data.py --skip-download
 ```
 
-### Step 2: Extract Features (Requires Additional Setup)
+Downloads `brazil-latest.osm.pbf` to `data/raw/osm/raw/`.
 
-The feature extraction step requires the `osmium` library:
+### Step 2: Extract Features
+
+Extract raw geometries and nodes for processing:
+
+**Extract Roads:**
 
 ```bash
-# Install osmium
-pip install osmium
-
-# Run extraction
-python src/osm/collect_osm_data.py --skip-download
+python src/osm/extract_roads.py
 ```
+
+**Extract POIs:**
+
+```bash
+python src/osm/extract_pois.py
+```
+
+### Step 3: Calculate Metrics
+
+Aggregate the extracted roads into municipality-level predictors:
+
+```bash
+python src/treatment/calculate_road_metrics.py --chunk-size 150000
+```
+
+_Note: This script uses an optimized endpoint-first scan to run on 8GB RAM._
+
+## Data Processing Pipeline
+
+### Status
+
+- [x] Download Brazil OSM data from Geofabrik
+- [x] Extract commercial POIs
+- [x] Extract road network geometry
+- [x] Calculate road density and intersections per municipality
+- [x] Integrate with final master dataset
 
 ## Output Structure
 
 ```text
 data/raw/osm/
 ├── raw/
-│   └── brazil-latest.osm.pbf          # Raw OSM data (~1-2 GB)
+│   └── brazil-latest.osm.pbf          # Raw OSM data (~1.5 GB)
 ├── pois/
-│   └── commercial_pois.geojson        # Extracted POIs (future)
+│   └── commercial_pois.geojson        # Extracted POI geometries
 └── roads/
-    └── road_network.geojson           # Extracted roads (future)
+    └── road_network.geojson           # Extracted road geometries
 ```
-
-## Data Processing Pipeline
-
-### Collection
-
-1. ✅ Download Brazil OSM data from Geofabrik
-2. ✅ Extract commercial POIs (banks, shops, amenities)
-3. ✅ Extract road network (highways, roads)
-4. ✅ Save as GeoJSON/GeoPackage
-
-### Aggregation (Next)
-
-1. Load municipality boundaries (IBGE)
-2. Perform Point-in-Polygon operations
-3. Calculate commercial density per municipality
-4. Calculate road length and density per municipality
-5. Export aggregated statistics to CSV
 
 ## Dependencies
 
-### Required
-
-- `requests` - HTTP downloads
-- `geopandas` - Geospatial data processing
-- `pandas` - Data manipulation
-- `tqdm` - Progress bars
-- `shapely` - Geometric operations
-
-### Optional (for extraction)
-
-- `osmium` - OSM PBF file parsing
-- Alternative: `ogr2ogr` (GDAL command-line tool)
-
-## Data Sources
-
-### Geofabrik
-
-- **URL**: <https://download.geofabrik.de/south-america/brazil.html>
-- **Format**: PBF (Protocol Buffer Format)
-- **Size**: ~1-2 GB compressed
-- **Update**: Daily
-- **License**: ODbL (Open Database License)
-
-### Overpass API
-
-- **URL**: <https://overpass-api.de/>
-- **Use Case**: Smaller, targeted queries
-- **Limitation**: Not suitable for entire Brazil download
-
-## OSM Tag Reference
-
-### Commercial Tags
-
-```python
-COMMERCIAL_TAGS = {
-    'amenity': ['bank', 'atm', 'bureau_de_change', 'marketplace'],
-    'shop': ['supermarket', 'convenience', 'department_store', 'mall', ...],
-    'office': ['company', 'government', 'insurance', 'financial']
-}
-```
-
-### Infrastructure Tags
-
-```python
-INFRASTRUCTURE_TAGS = {
-    'highway': ['motorway', 'trunk', 'primary', 'secondary', 'tertiary', ...]
-}
-```
-
-## Next Steps
-
-1. **Install osmium**: `pip install osmium`
-2. **Implement OSM parsing**: Create osmium handlers for POI and road extraction
-3. **Download municipality boundaries**: Get IBGE municipality shapefiles
-4. **Implement aggregation**: Point-in-Polygon operations for statistics
-5. **Create unified output**: CSV with municipality-level economic indicators
-
-## Troubleshooting
-
-### Download Issues
-
-- **Slow download**: Geofabrik servers may be slow. Be patient or try later.
-- **Connection timeout**: Increase timeout or check internet connection.
-- **Disk space**: Ensure at least 5 GB free space (2 GB download + processing).
-
-### Extraction Issues
-
-- **osmium not found**: Install with `pip install osmium`
-- **Memory errors**: OSM data is large. Consider processing by state/region.
-- **Missing features**: Verify OSM tags match expected categories.
+- `osmium` - High-performance OSM PBF parsing.
+- `geopandas` - Spatial joins and GeoJSON manipulation.
+- `fiona` - Optimized GeoJSON streaming.
+- `tqdm` - Progress monitoring.
 
 ## References
 
 - [OpenStreetMap Wiki](https://wiki.openstreetmap.org/)
 - [Geofabrik Downloads](https://download.geofabrik.de/)
-- [OSM Tag Reference](https://wiki.openstreetmap.org/wiki/Map_features)
-- [Osmium Documentation](https://osmcode.org/pyosmium/)
+- [pyosmium](https://osmcode.org/pyosmium/)

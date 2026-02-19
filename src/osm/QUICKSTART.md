@@ -60,88 +60,63 @@ pip install osmium
 - Visual C++ Build Tools
 - Or use a pre-built wheel from <https://www.lfd.uci.edu/~gohlke/pythonlibs/>
 
-### Step 3: Extract Features (Coming Soon)
+### Step 3: Extract Geometries
 
-Once osmium is installed, run extraction:
-
-```bash
-python src/osm/collect_osm_data.py --skip-download
-```
-
-**Note:** Feature extraction is currently under development. The script will:
-
-- Parse the PBF file
-- Extract commercial POIs (banks, shops, offices)
-- Extract road networks
-- Save as GeoJSON files
-
-## Troubleshooting
-
-### Download is slow
-
-- Geofabrik servers can be slow during peak hours
-- Try downloading during off-peak times
-- Download typically takes 5-10 minutes on a good connection
-
-### Not enough disk space
-
-- Ensure at least 5 GB free space
-- Raw PBF: ~1.5 GB
-- Extracted features: ~1-2 GB
-- Processing temp files: ~1-2 GB
-
-### osmium installation fails
-
-**Windows:**
+Run the extraction scripts to convert the raw PBF into GeoJSON files:
 
 ```bash
-# Option 1: Install Visual C++ Build Tools
-# Download from: https://visualstudio.microsoft.com/visual-cpp-build-tools/
+# Extract road segments
+python src/osm/extract_roads.py
 
-# Option 2: Use pre-built wheel
-pip install osmium --find-links https://www.lfd.uci.edu/~gohlke/pythonlibs/
+# Extract points of interest
+python src/osm/extract_pois.py
 ```
 
-**Linux:**
+### Step 4: Calculate Analytical Metrics
+
+Generate the vulnerability/infrastructure predictors per municipality:
 
 ```bash
-# Install system dependencies first
-sudo apt-get install libboost-python-dev libexpat1-dev zlib1g-dev libbz2-dev
-pip install osmium
+python src/treatment/calculate_road_metrics.py --chunk-size 150000
 ```
 
-## What's Next?
+**What it does:**
 
-After collecting OSM data, the next phase is aggregation:
+- Scans `road_network.geojson` for junctions and road lengths.
+- Performs a spatial join with IBGE municipality polygons.
+- Outputs `road_predictors_muni_final.csv`.
 
-1. **Download municipality boundaries** from IBGE
-2. **Perform spatial joins** (Point-in-Polygon)
-3. **Calculate statistics** per municipality:
-    - Commercial density (POIs per km²)
-    - Road density (km of roads per km²)
-    - Infrastructure scores
-4. **Export to CSV** for integration with satellite data
+---
 
-## File Structure After Collection
+## File Structure After Processing
 
 ```text
 iguide_project/
 ├── data/
 │   ├── raw/
-│   │   └── osm/
-│   │       ├── raw/
-│   │       │   └── brazil-latest.osm.pbf    # Downloaded OSM data
-│   │       ├── pois/                         # (Future) Extracted POIs
-│   │       └── roads/                        # (Future) Extracted roads
-│   └── processed/
-│       └── osm/                              # (Future) Processed outputs
-└── src/
-    └── osm/
-        ├── collect_osm_data.py              # Main collection script
-        ├── extract_pois.py                   # POI extraction
-        ├── extract_roads.py                  # Road extraction
-        └── README.md                         # Detailed documentation
+│   │   ├── osm/
+│   │   │   ├── raw/
+│   │   │   │   └── brazil-latest.osm.pbf    # Raw PBF
+│   │   │   ├── pois/
+│   │   │   │   └── commercial_pois.geojson # Extracted POIs
+│   │   │   └── roads/
+│   │   │       └── road_network.geojson    # Extracted Roads
+│   ├── processed/
+│   │   └── road_predictors_muni_final.csv  # Final Infrastructure Metrics
 ```
+
+## Troubleshooting
+
+### Memory Errors during Metrics Calculation
+
+Processing 6.4 million roads requires a lot of RAM. The script is optimized for **8GB RAM** by using a two-pass scan. If you still have issues:
+
+1. Close all other programs (including VS Code if necessary).
+2. Run with a smaller chunk size: `--chunk-size 50000`.
+
+### osmium installation fails
+
+...
 
 ## Command Reference
 
