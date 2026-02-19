@@ -82,7 +82,14 @@ source venv/bin/activate  # Windows: .\venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 2. Configure
+### 2. Alternative: Setup with Conda
+
+```bash
+conda env create -f environment.yml
+conda activate iguide
+```
+
+### 3. Configure
 
 Copy `.env.example` to `.env` and configure your GEE Project ID.
 
