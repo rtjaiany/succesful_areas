@@ -11,10 +11,21 @@ numpy>=1.24.0
 geopandas>=0.14.0
 shapely>=2.0.0
 osmium>=3.6.0  # OSM PBF file parsing
+scipy>=1.10.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
 
 # Database (for future integration)
 psycopg2-binary>=2.9.9
 sqlalchemy>=2.0.0
+
+# Modeling and Spatial Analysis
+pymc>=5.10.0
+pytensor>=2.18.0
+libpysal>=4.9.0
+esda>=2.5.0
+spreg>=1.4.0
+statsmodels>=0.14.0
 
 # Configuration
 python-dotenv>=1.0.0
