@@ -30,9 +30,8 @@ iguide_project/
 │   │   ├── calculate_road_metrics.py
 │   │   ├── integrate_final_dataset.py
 │   │   └── preprocess_cities.py
-│   ├── data_analysis/         # Exploratory Data Analysis
-│   │   ├── eda.ipnyb          # Interactive Notebook
-│   │   └── eda.py             # Script version of EDA
+│   ├── data_analysis/         # Analysis & Modeling
+│   │   └── eda_bayesian.ipynb         # EDA + Bayesian Spatial Model (BYM2)
 │   └── utils/                 # Shared utilities
 ├── 📂 data/                   # Data storage
 │   ├── raw/                   # Raw datasets (Shapes, Business, etc.)
@@ -138,16 +137,12 @@ python src/treatment/calculate_road_metrics.py --chunk-size 150000
 python src/treatment/integrate_final_dataset.py
 ```
 
-### Step 5: Exploratory Data Analysis
+### Step 5: Analysis & Modeling
 
-Run the EDA notebook to generate insights, visualizations, and the enhanced dataset with density metrics.
+Run the unified notebook to perform Exploratory Data Analysis and Bayesian Spatial Modeling (BYM2).
 
 ```bash
-# Run via Jupyter
-jupyter notebook src/data_analysis/eda.ipynb
-
-# Or execute the script directly
-python src/data_analysis/eda.py
+jupyter notebook src/data_analysis/eda_bayesian.ipynb
 ```
 
 ---
@@ -161,6 +156,7 @@ python src/data_analysis/eda.py
 ## 📚 Detailed Documentation
 
 - **[Quick Start Guide](docs/QUICKSTART.md)**: Extended setup and execution instructions.
+- **[Bayesian Modeling](docs/bayesian_modeling.md)**: Detailed explanation of the BYM2 spatial model and the 6-pillar evaluation framework.
 - **[Satellite Data](docs/satellite_data.md)**: Deep dive into GEE extraction, indices, and embeddings.
 - **[Socioeconomic Data](docs/socioeconomic_data.md)**: Business data sources, variables, and processing.
 - **[Memory Optimization](docs/MEMORY_OPTIMIZATION.md)**: How we handle 8GB+ road networks on standard RAM.

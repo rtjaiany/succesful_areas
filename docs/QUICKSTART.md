@@ -65,15 +65,12 @@ Unify all collected sources (OSM, GEE, IBGE, Socioeconomic) into one master CSV:
 python src/treatment/integrate_final_dataset.py
 ```
 
-### Step 5: Exploratory Data Analysis & Enhancement
+### Step 5: Analysis & Modeling
 
-Run the EDA notebook to generate density metrics and save the enhanced dataset:
+Run the unified notebook to perform Exploratory Data Analysis and Bayesian Spatial Modeling (BYM2).
 
 ```bash
-# Execute standalone script
-python src/data_analysis/eda.py
-# Or run the notebook interactively
-jupyter notebook src/data_analysis/eda.ipynb
+jupyter notebook src/data_analysis/eda_bayesian.ipynb
 ```
 
 ---
@@ -87,7 +84,7 @@ iguide_project/
 │   ├── satellite/       # GEE extraction
 │   ├── osm/             # PBF processing
 │   ├── treatment/       # Metrics & Integration
-│   ├── data_analysis/   # EDA & Visualization
+│   ├── data_analysis/   # Analysis & Modeling
 │   └── utils/           # Shared helpers
 ├── data/
 │   ├── raw/             # Raw source datasets

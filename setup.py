@@ -151,7 +151,7 @@ def main():
     print("1. Activate your virtual environment")
     print("2. Authenticate with Google Earth Engine")
     print("3. Update your .env file with credentials")
-    print("4. Run: python src/gee/extract_embeddings.py")
+    print("4. Run: python src/satellite/extract_embeddings.py")
     print("\nFor more information, see README.md")
 
 

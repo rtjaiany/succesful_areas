@@ -35,7 +35,7 @@ Data sourced from **Receita Federal** public records.
 
 #### Derived Density Metrics
 
-These metrics are calculated during the **EDA phase** (`src/data_analysis/eda.py`) to normalize for municipality size:
+These metrics are calculated during the **Analysis phase** (`src/data_analysis/eda_bayesian.ipynb`) to normalize for municipality size:
 
 | Metric             | Formula                      | Interpretation                               |
 | :----------------- | :--------------------------- | :------------------------------------------- |
