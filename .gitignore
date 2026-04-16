@@ -78,6 +78,7 @@ outputs/exports/**
 !outputs/tables/.gitkeep
 !outputs/exports/.gitkeep
 *.png
+!docs/assets/cover.png
 *.jpg
 *.jpeg
 *.svg
