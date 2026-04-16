@@ -21,11 +21,11 @@
 
 Deciding the spatial location for market entry is one of the most critical strategic decisions for firms seeking sustained growth. Nearly **50% of new ventures fail within their first five years**, with 35% of failures occurring because the product or service does not meet an actual market need. Existing frameworks overlook **spatial heterogeneity** — the geographic variation in infrastructure, accessibility, demographics, and economic activity that shapes real market opportunities.
 
-**iGuide's Geolocate** addresses this gap by integrating multi-source geospatial and socioeconomic data into a rigorous **Bayesian Spatial AI framework** (BYM2 model) to quantify business survival probability across 5,500+ Brazilian municipalities and identify geographically favorable locations for market entry.
+**Geolocate** addresses this gap by integrating multi-source geospatial and socioeconomic data into a rigorous **Bayesian Spatial AI framework** (BYM2 model) to quantify business survival probability across +1000 Brazilian municipalities and identify geographically favorable locations for market entry.
 
 ---
 
-## 🧠 Core Contribution: `geolocate.ipynb`
+## Core Contribution: `geolocate.ipynb`
 
 The central artifact of this project is the [`geolocate.ipynb`](src/data_analysis/geolocate.ipynb) notebook — a fully documented, end-to-end spatial analysis pipeline. It covers:
 
@@ -33,17 +33,17 @@ The central artifact of this project is the [`geolocate.ipynb`](src/data_analysi
 
 Four complementary data sources are fused at the municipality level:
 
-| Source                               | Type                    | Variables                                  |
-| ------------------------------------ | ----------------------- | ------------------------------------------ |
-| **OpenStreetMap (OSM)**              | Road networks           | Road density, intersections                |
-| **Google Earth Engine (Sentinel-2)** | Remote sensing          | NDVI, EVI, NDBI                            |
-| **IBGE**                             | Census / Administrative | GDP, HDI, population, urbanization         |
-| **Receita Federal (RFB)**            | Business registry       | Active/failed firms (survival rate target) |
+| Source                                                     | Type                    | Variables                                  |
+| ---------------------------------------------------------- | ----------------------- | ------------------------------------------ |
+| **OpenStreetMap (OSM)**                                    | Road networks           | Road density, intersections                |
+| **Google Earth Engine (Sentinel-2)**                       | Remote sensing          | NDVI, EVI, NDBI                            |
+| **Brazilian Institute of Geography and Statistics (IBGE)** | Census / Administrative | GDP, HDI, population, urbanization         |
+| **Brazilian Federal Revenue (RFB)**                        | Business registry       | Active/failed firms (survival rate target) |
 
 ### 2. Data Preprocessing Pipeline
 
 - **Financial type conversion** — Parsing government-encoded numeric strings (e.g., `"1.500,00"`) into `float64`.
-- **Median imputation** — Robust to right-skewed municipal distributions; applied domain-independently to SP and RS.
+- **Median imputation** — Robust to right-skewed municipal distributions; applied domain-independently to SP (n=645) and RS (n=499).
 - **Z-score standardization** — All 27 candidate predictors normalized for stable HMC sampling.
 - **Queen contiguity graph** — Spatial adjacency matrix including island detection and correction (e.g., coastal municipalities like Ilhabela, SP).
 
@@ -55,11 +55,11 @@ $$\beta_j \sim \text{Laplace}(0,\ b), \quad b = 1.0$$
 
 Variables are retained using a **94% HDI zero-exclusion rule**. Out of 27 candidate covariates, **3 robust drivers** are identified:
 
-| Predictor                       | Coefficient (β̄) | 94% HDI        | Direction   |
-| ------------------------------- | --------------- | -------------- | ----------- |
-| HDI Income (`z_HDI_income`)     | ≈ +0.041        | [0.017, 0.068] | ✅ Positive |
-| Distance to Capital             | ≈ −0.067        | excludes 0     | ✅ Negative |
-| Urbanization via public streets | ≈ +0.001        | excludes 0     | ✅ Positive |
+| Predictor                       | Coefficient (β̄) | Direction   |
+| ------------------------------- | --------------- | ----------- |
+| HDI Income                      | ≈ +0.041        | ✅ Positive |
+| Distance to Capital             | ≈ −0.067        | ✅ Negative |
+| Urbanization via public streets | ≈ +0.001        | ✅ Positive |
 
 ### 4. BYM2 Bayesian Spatial Model
 
@@ -182,11 +182,10 @@ git checkout bayes_model
 pip install -r src/data_analysis/requirements_geolocate.txt
 ```
 
-**Option B — Conda (full pipeline):**
+**Option B — pip (full pipeline):**
 
 ```bash
-conda env create -f environment.yml
-conda activate iguide
+pip install -r requirements.txt
 ```
 
 ### 2. Configure GEE (pipeline only)
