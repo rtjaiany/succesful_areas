@@ -1,0 +1,16 @@
+numpy
+pandas
+scipy
+geopandas
+shapely
+matplotlib
+seaborn
+ipython
+statsmodels
+libpysal
+esda
+scikit-learn
+pymc>=5.10.0
+pytensor
+arviz
+jax

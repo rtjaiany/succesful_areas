@@ -1,5 +1,9 @@
 # iGuide Project - Brazilian Successful Areas
 
+<p align="center">
+  <img src="docs/assets/cover.png" alt="Geolocate: Spatial Modeling of Market Entry Viability" width="100%"/>
+</p>
+
 ## Overview
 
 This project collects and analyzes geospatial data for Brazilian municipalities to identify successful areas using:
@@ -19,20 +23,34 @@ The data collected can be used for environmental analysis, urban planning, and m
 iguide_project/
 ├── 📂 src/                    # Source code
 │   ├── satellite/             # Satellite data (Google Earth Engine)
+│   │   ├── README.md
 │   │   └── extract_embeddings.py
 │   ├── osm/                   # OpenStreetMap data
+│   │   ├── README.md
+│   │   ├── IMPLEMENTATION_SUMMARY.md
 │   │   ├── collect_osm_data.py
 │   │   ├── extract_pois.py
 │   │   └── extract_roads.py
 │   ├── ibge/                  # IBGE data collection
+│   │   ├── README.md
 │   │   └── collect_municipalities.py
 │   ├── treatment/             # Data cleaning and integration
+│   │   ├── README.md
+│   │   ├── base_treatment.py
 │   │   ├── calculate_road_metrics.py
+│   │   ├── check_muni_cols.py
 │   │   ├── integrate_final_dataset.py
-│   │   └── preprocess_cities.py
+│   │   ├── preprocess_cities.py
+│   │   └── test_perf.py
 │   ├── data_analysis/         # Analysis & Modeling
+│   │   ├── README.md
+│   │   ├── geolocate.ipynb            # Geolocation and Integration
+│   │   ├── requirements_geolocate.txt # Specific requirements
 │   │   └── eda_bayesian.ipynb         # EDA + Bayesian Spatial Model (BYM2)
 │   └── utils/                 # Shared utilities
+│       ├── gee_auth.py
+│       ├── logger_config.py
+│       └── memory_utils.py
 ├── 📂 data/                   # Data storage
 │   ├── raw/                   # Raw datasets (Shapes, Business, etc.)
 │   └── processed/             # Final analytical datasets
@@ -139,9 +157,13 @@ python src/treatment/integrate_final_dataset.py
 
 ### Step 5: Analysis & Modeling
 
-Run the unified notebook to perform Exploratory Data Analysis and Bayesian Spatial Modeling (BYM2).
+Run the notebooks sequentially to geolocate external datasets and perform spatial modeling:
 
 ```bash
+# 1. Integrate and geocode additional data sources
+jupyter notebook src/data_analysis/geolocate.ipynb
+
+# 2. Run Exploratory Data Analysis and Bayesian Spatial Modeling (BYM2)
 jupyter notebook src/data_analysis/eda_bayesian.ipynb
 ```
 

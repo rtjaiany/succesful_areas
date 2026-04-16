@@ -49,11 +49,21 @@ $$\text{logit}(p_i) = \alpha + \mathbf{X}_i \beta + \sigma (\sqrt{\rho} \cdot \p
 -   **Spatial Weights:** Queen adjacency matrix with island handling.
 -   **Diagnostics:** Global Moran's I to confirm spatial clustering and VIF to prevent multicollinearity.
 
-### Overfitting Verification
-We monitor model complexity and potential overfitting using:
--   **Posterior Predictive Checks (PPC):** Comparing observed success counts vs. model-simulated success counts.
--   **LOO (Leave-One-Out) CV:** Estimating out-of-sample predictive accuracy.
--   **R-hat Diagnostics:** Ensuring convergence across multiple MCMC chains.
+### Advanced Diagnostics & Verification
+We monitor model complexity, spatial shrinkage, and potential overfitting using a comprehensive suite of diagnostics:
+-   **PSIS-LOO (Location-One-Out) CV:** Estimating out-of-sample predictive accuracy robustly.
+-   **Posterior Predictive Checks (PPC):** Comparing observed success counts vs. model-simulated success counts to ensure empirical validity.
+-   **Spatial K-Fold Cross-Validation:** Validating spatial dependence across administrative domains.
+-   **Shrinkage and Residual Metrics:** Advanced evaluation of how much spatial smoothing is occurring versus how much variance is driven by residuals.
+-   **R-hat Diagnostics:** Ensuring convergence across multiple JAX-accelerated MCMC chains.
+
+---
+
+## 📈 Sectoral Specificity & Sensitivity
+
+Recent model iterations introduce capabilities to visualize and measure how different economic micro-sectors react to spatial realities.
+-   **Subpopulation Sensitivity Analysis:** The modeling framework supports testing robustness across granular market sub-divisions, providing Ph.D.-level scrutiny of sub-demographics.
+-   **KDE Visualizations for Spatial Shrinkage:** Comparing the empirical reality against spatially-smoothed Bayesian posterior predictions. Specific focus is placed on dissecting baseline divergence for the **Retail** and **Food & Beverage** sectors through Kernel Density Estimation (KDE) plots.
 
 ---
 

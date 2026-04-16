@@ -67,9 +67,13 @@ python src/treatment/integrate_final_dataset.py
 
 ### Step 5: Analysis & Modeling
 
-Run the unified notebook to perform Exploratory Data Analysis and Bayesian Spatial Modeling (BYM2).
+Run the notebooks sequentially to geolocate external datasets and perform spatial modeling:
 
 ```bash
+# 1. Integrate and geocode additional data sources
+jupyter notebook src/data_analysis/geolocate.ipynb
+
+# 2. Run Exploratory Data Analysis and Bayesian Spatial Modeling (BYM2)
 jupyter notebook src/data_analysis/eda_bayesian.ipynb
 ```
 
@@ -84,12 +88,13 @@ iguide_project/
 │   ├── satellite/       # GEE extraction
 │   ├── osm/             # PBF processing
 │   ├── treatment/       # Metrics & Integration
-│   ├── data_analysis/   # Analysis & Modeling
+│   ├── data_analysis/   # Analysis & Modeling (geolocate & BYM2)
 │   └── utils/           # Shared helpers
 ├── data/
 │   ├── raw/             # Raw source datasets
 │   └── processed/       # Final Unified Dataset
 ```
+
 
 ## Output
 
