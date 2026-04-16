@@ -1,6 +1,6 @@
 # Bayesian Spatial Modeling — Technical Reference
 
-This document provides a detailed technical description of the probabilistic framework implemented in [`geolocate.ipynb`](../src/data_analysis/geolocate.ipynb). It is intended as a companion reference for the notebook, covering the full modeling pipeline from variable selection to strategic classification.
+This document provides a detailed technical description of the probabilistic framework implemented in [`geolocate.ipynb`](../notebooks/geolocate.ipynb). It is intended as a companion reference for the notebook, covering the full modeling pipeline from variable selection to strategic classification.
 
 ---
 

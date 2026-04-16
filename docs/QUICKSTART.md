@@ -8,7 +8,7 @@ This guide provides a step-by-step workflow to reproduce the master analytical d
 
 ```bash
 git clone <repository-url>
-cd iguide_project
+cd succesful_areas
 python -m venv venv
 source venv/bin/activate  # Windows: .\venv\Scripts\activate
 pip install -r requirements.txt
@@ -71,10 +71,10 @@ Run the notebooks sequentially to geolocate external datasets and perform spatia
 
 ```bash
 # 1. Integrate and geocode additional data sources
-jupyter notebook src/data_analysis/geolocate.ipynb
+jupyter notebook notebooks/geolocate.ipynb
 
-# 2. Run Exploratory Data Analysis and Bayesian Spatial Modeling (BYM2)
-jupyter notebook src/data_analysis/eda_bayesian.ipynb
+# 2. Run Exploratory Data Analysis
+jupyter notebook notebooks/eda.ipynb
 ```
 
 ---
@@ -82,17 +82,17 @@ jupyter notebook src/data_analysis/eda_bayesian.ipynb
 ## Project Structure
 
 ```text
-iguide_project/
+succesful_areas/
+├── notebooks/       # Analysis & Modeling (geolocate & EDA)
 ├── src/
-│   ├── ibge/            # Boundary collection
-│   ├── satellite/       # GEE extraction
-│   ├── osm/             # PBF processing
-│   ├── treatment/       # Metrics & Integration
-│   ├── data_analysis/   # Analysis & Modeling (geolocate & BYM2)
-│   └── utils/           # Shared helpers
+│   ├── ibge/        # Boundary collection
+│   ├── satellite/   # GEE extraction
+│   ├── osm/         # PBF processing
+│   ├── treatment/   # Metrics & Integration
+│   └── utils/       # Shared helpers
 ├── data/
-│   ├── raw/             # Raw source datasets
-│   └── processed/       # Final Unified Dataset
+│   ├── raw/         # Raw source datasets
+│   └── processed/   # Final Unified Dataset
 ```
 
 

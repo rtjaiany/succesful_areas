@@ -103,6 +103,12 @@ desktop.ini
 notebooks/**/*.ipynb
 !notebooks/**/*_template.ipynb
 
-# Legacy / archive notebooks (not for tracking)
-src/data_analysis/bayesian_old.ipynb
-src/data_analysis/oldest.ipynb
+# Legacy / archive notebooks (now in notebooks/)
+notebooks/bayesian_old.ipynb
+notebooks/oldest.ipynb
+
+# Data files
+data/**/*.csv
+data/**/*.parquet
+data/**/*.geojson
+data/**/*.gpkg

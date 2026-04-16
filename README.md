@@ -27,7 +27,7 @@ Deciding the spatial location for market entry is one of the most critical strat
 
 ## Core Contribution: `geolocate.ipynb`
 
-The central artifact of this project is the [`geolocate.ipynb`](src/data_analysis/geolocate.ipynb) notebook — a fully documented, end-to-end spatial analysis pipeline. It covers:
+The central artifact of this project is the [`geolocate.ipynb`](notebooks/geolocate.ipynb) notebook — a fully documented, end-to-end spatial analysis pipeline. It covers:
 
 ### 1. Multi-Source Data Integration
 
@@ -129,8 +129,8 @@ Step 4: Final Integration
        → data/processed/final_integrated_dataset.csv
 
 Step 5: Analysis & Modeling (Core)
-  ├─ jupyter notebook src/data_analysis/geolocate.ipynb   ← MAIN
-  └─ jupyter notebook src/data_analysis/eda_bayesian.ipynb
+  ├─ jupyter notebook notebooks/geolocate.ipynb   ← MAIN
+  └─ jupyter notebook notebooks/eda.ipynb
 ```
 
 ---
@@ -139,30 +139,30 @@ Step 5: Analysis & Modeling (Core)
 
 ```text
 succesful_areas/
+├── 📂 notebooks/                   # ⭐ Core analysis & pipelines
+│   ├── geolocate.ipynb             # Main spatial model (BYM2)
+│   ├── requirements_geolocate.txt  # Notebook-specific dependencies
+│   └── eda.ipynb                   # Supplementary EDA
 ├── 📂 src/
-│   ├── data_analysis/              # ⭐ Core analysis
-│   │   ├── geolocate.ipynb             # Main spatial model (BYM2)
-│   │   ├── requirements_geolocate.txt  # Notebook-specific dependencies
-│   │   ├── eda_bayesian.ipynb          # Supplementary EDA
-│   │   └── README.md
 │   ├── satellite/                  # GEE spectral extraction
 │   ├── osm/                        # OSM PBF processing
 │   ├── ibge/                       # Municipality boundaries
 │   ├── treatment/                  # Data cleaning & integration
 │   └── utils/                      # Auth, logging, memory helpers
 ├── 📂 data/
-│   ├── raw/                        # Source datasets
-│   └── processed/                  # final_integrated_dataset.csv
+│   ├── raw/                        # Source datasets (Gitignored)
+│   └── processed/                  # final_integrated_dataset.csv (Gitignored)
 ├── 📂 docs/
 │   ├── assets/cover.png
 │   ├── bayesian_modeling.md        # Full methodology reference
 │   ├── QUICKSTART.md
+│   ├── osm_data.md                  # Consolidated OSM pipeline
 │   ├── MEMORY_OPTIMIZATION.md
 │   ├── satellite_data.md
 │   └── socioeconomic_data.md
 ├── requirements.txt                # Full project dependencies
 └── config/
-```
+``````
 
 ---
 
@@ -179,7 +179,7 @@ git checkout bayes_model
 **Option A — pip (geolocate notebook only):**
 
 ```bash
-pip install -r src/data_analysis/requirements_geolocate.txt
+pip install -r notebooks/requirements_geolocate.txt
 ```
 
 **Option B — pip (full pipeline):**
@@ -198,7 +198,7 @@ cp .env.example .env
 ### 3. Run the Core Model
 
 ```bash
-jupyter notebook src/data_analysis/geolocate.ipynb
+jupyter notebook notebooks/geolocate.ipynb
 ```
 
 ---
@@ -209,6 +209,7 @@ jupyter notebook src/data_analysis/geolocate.ipynb
 | -------------------------------------------------- | ---------------------------------------------- |
 | [Bayesian Modeling](docs/bayesian_modeling.md)     | BYM2 specification, diagnostics, sectoral KDE  |
 | [Quick Start](docs/QUICKSTART.md)                  | Full pipeline from data collection to modeling |
+| [OSM Pipeline](docs/osm_data.md)                   | Infrastructure and POI extraction details      |
 | [Satellite Data](docs/satellite_data.md)           | GEE extraction, spectral indices, embeddings   |
 | [Socioeconomic Data](docs/socioeconomic_data.md)   | Business registry variables and processing     |
 | [Memory Optimization](docs/MEMORY_OPTIMIZATION.md) | 8GB RAM-optimized road network processing      |
