@@ -5,7 +5,7 @@
 #       are Python standard-library modules — no install needed.
 
 # ── Core Scientific & Geospatial ─────────────────────────────────────
-numpy>=1.24.0
+numpy>=1.24.0,<2.0.0
 pandas>=2.0.0
 scipy>=1.10.0
 geopandas>=0.14.0
@@ -26,6 +26,6 @@ scikit-learn>=1.3.0     # KMeans, mean_absolute_error, mean_squared_error
 pymc>=5.10.0            # pm, pymc.sampling.jax
 pytensor>=2.18.0        # pytensor.tensor (pt) — PyMC backend
 arviz>=0.16.0           # Bayesian trace visualization & diagnostics
-jax>=0.4.0              # JAX runtime
-jaxlib>=0.4.0           # JAX compiled library (required by jax)
-numpyro>=0.13.0         # Required backend for pymc.sampling.jax
+jax==0.4.23             # JAX runtime (Pinned for BYM2 stable compiling)
+jaxlib==0.4.23          # JAX compiled library 
+numpyro==0.13.0         # Backend for pymc.sampling.jax
