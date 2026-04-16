@@ -3,12 +3,8 @@ from pathlib import Path
 import time
 import geopandas as gpd
 
-roads_path = Path(
-    r"c:\Users\jaian\OneDrive\Documentos\01 - In Progress\06 - SWE\geolocate\data\raw\osm\roads\road_network.geojson"
-)
-muni_path = Path(
-    r"c:\Users\jaian\OneDrive\Documentos\01 - In Progress\06 - SWE\geolocate\data\raw\shapefiles\BR_Municipios_2022\BR_Municipios_2022.shp"
-)
+roads_path = Path("data/raw/osm/roads/road_network.geojson")
+muni_path = Path("data/raw/shapefiles/BR_Municipios_2022/BR_Municipios_2022.shp")
 
 start = time.time()
 info = pyogrio.read_info(roads_path)

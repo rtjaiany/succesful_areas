@@ -1,5 +1,5 @@
 """
-Setup script for iGuide Project
+Setup script for Geolocate Project
 
 This script helps set up the project environment.
 """
@@ -114,7 +114,7 @@ def authenticate_gee():
 
 def main():
     """Main setup function."""
-    logger.info("Starting Geolocate Project setup...")
+    logger.info("Starting iGuide Project setup...")
     logger.info("=" * 60)
 
     # Create directories
