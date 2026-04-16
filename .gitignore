@@ -102,3 +102,7 @@ desktop.ini
 .ipynb_checkpoints
 notebooks/**/*.ipynb
 !notebooks/**/*_template.ipynb
+
+# Legacy / archive notebooks (not for tracking)
+src/data_analysis/bayesian_old.ipynb
+src/data_analysis/oldest.ipynb
