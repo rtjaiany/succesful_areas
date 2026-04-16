@@ -191,7 +191,7 @@ pip install -r requirements.txt
 ### 2. Configure GEE (pipeline only)
 
 ```bash
-cp .env.example .env
+cp config/.env.example .env
 # Set your GEE_PROJECT_ID in .env
 ```
 

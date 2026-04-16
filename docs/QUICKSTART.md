@@ -23,7 +23,7 @@ conda activate iguide
 
 ### 2. Configuration
 
-Copy `.env.example` to `.env` and set your `GEE_PROJECT_ID`.
+Copy `config/.env.example` to `.env` and set your `GEE_PROJECT_ID`.
 
 ---
 

@@ -52,7 +52,7 @@ def create_env_file():
     """Create .env file from template."""
     logger.info("Setting up environment variables...")
 
-    env_example = Path(".env.example")
+    env_example = Path("config/.env.example")
     env_file = Path(".env")
 
     if env_file.exists():
@@ -60,7 +60,7 @@ def create_env_file():
         return True
 
     if not env_example.exists():
-        logger.error(".env.example not found")
+        logger.error("config/.env.example not found")
         return False
 
     try:
