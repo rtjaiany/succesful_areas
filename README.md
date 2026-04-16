@@ -13,6 +13,7 @@
   <img src="https://img.shields.io/badge/Python-3.8+-green" alt="Python"/>
   <img src="https://img.shields.io/badge/PyMC-5.10+-orange" alt="PyMC"/>
   <img src="https://img.shields.io/badge/Status-Active-brightgreen" alt="Status"/>
+  <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://img.shields.io/badge/License-CC_BY--NC--SA_4.0-lightgrey.svg" alt="License: CC BY-NC-SA 4.0"></a>
 </p>
 
 ---
@@ -221,3 +222,11 @@ jupyter notebook notebooks/geolocate.ipynb
 - **Jaiany Rocha** — jaiany.trindade@ufrgs.br
 - **Devika Jain** — kakkar@fas.harvard.edu
 - **Vinicius Brei** — brei@ufrgs.br
+
+---
+
+## 📄 License
+
+This project is licensed under the **[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)](https://creativecommons.org/licenses/by-nc-sa/4.0/)** License.
+
+You are free to share and adapt the material, provided you give appropriate credit, do not use the material for commercial purposes, and distribute your contributions under the same license.
