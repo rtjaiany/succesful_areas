@@ -11,7 +11,7 @@ Key optimizations:
 - Incremental file writes
 - Memory-efficient data structures
 
-Author: iGuide Project Team (Jaiany Rocha, Devika Jain, and Vinicius Brei)
+Author: Geolocate Project Team (Jaiany Rocha, Devika Jain, and Vinicius Brei)
 Date: 2026-01-28
 """
 

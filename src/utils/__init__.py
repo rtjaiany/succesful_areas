@@ -1,5 +1,5 @@
 """
-Utility functions for the iGuide project.
+Utility functions for the Geolocate project.
 
 This module provides common utilities including:
 - Google Earth Engine authentication

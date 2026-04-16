@@ -1,5 +1,5 @@
 """
-iGuide Project - Satellite and OSM Data Collection
+Geolocate Project - Satellite and OSM Data Collection
 
 This package contains modules for satellite imagery and OpenStreetMap data collection.
 """

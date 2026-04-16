@@ -18,7 +18,7 @@ Alternatively, if you prefer **Conda**:
 
 ```bash
 conda env create -f environment.yml
-conda activate iguide
+conda activate geolocate
 ```
 
 ### 2. Configuration
