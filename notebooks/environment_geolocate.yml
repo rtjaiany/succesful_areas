@@ -1,0 +1,30 @@
+name: geolocate
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  # ── Core Scientific & Geospatial ─────────────────────────────────────
+  - numpy>=1.24.0,<2.0.0
+  - pandas>=2.0.0,<2.2.0
+  - scipy>=1.10.0,<1.13.0
+  - geopandas>=0.14.0,<0.15.0
+  - shapely>=2.0.0
+
+  # ── Visualization ─────────────────────────────────────────────────────
+  - matplotlib>=3.7.0
+  - seaborn>=0.12.0
+  - ipython>=8.0.0
+
+  # ── Statistical & Spatial Analysis ───────────────────────────────────
+  - statsmodels>=0.14.0,<0.15.0
+  - libpysal>=4.9.0
+  - esda>=2.5.0
+  - scikit-learn>=1.3.0,<1.5.0
+
+  # ── Bayesian Modeling (JAX-accelerated) ───────────────────────────────
+  - pymc==5.10.3
+  - pytensor==2.18.1
+  - arviz==0.17.0
+  - jax==0.4.23
+  - jaxlib==0.4.23
+  - numpyro==0.13.0
